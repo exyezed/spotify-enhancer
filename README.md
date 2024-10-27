@@ -10,7 +10,7 @@
 
 ## Spotify Enhancer (Track & Playlist Downloader)
 
-Add download buttons to Spotify tracks and playlists, enabling quick downloads directly from the Spotify Web Player.
+Add download buttons to Spotify tracks and playlists on the web player, 128Kbps MP3 quality.
 
 #### [Install Script](https://update.greasyfork.org/scripts/514271/Spotify%20Enhancer%20%28Track%20%20Playlist%20Downloader%29.user.js)
 
