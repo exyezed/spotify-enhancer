@@ -30,3 +30,15 @@ Integrate a download button for tracks on Spotify Web to download audio at `320k
 ![image](https://github.com/user-attachments/assets/03841a35-6746-4e57-8cd2-fe022512ea1c)
 
 #### Thanks to [SpotifyDown](https://spotifydown.com)
+
+## 3. Spotify Enhancer (Full-Sized Artwork Downloader)
+
+Integrates an overlay button into Spotify Web Player for viewing and downloading full-sized `2000px` album artwork.
+
+#### [Install Script](https://update.greasyfork.org/scripts/514396/Spotify%20Enhancer%20%28Full-Sized%20Artwork%20Downloader%29.user.js)
+
+![image](https://github.com/user-attachments/assets/2904cd67-66a6-40b5-988c-99b412381c5f)
+
+![image](https://github.com/user-attachments/assets/1e1a1650-2fcd-4ec8-aa1f-00efcde424c1)
+
+![image](https://github.com/user-attachments/assets/2198488b-8777-4038-8890-89322aa878a1)
