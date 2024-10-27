@@ -8,11 +8,20 @@
 
 #### [Greasy Fork](https://greasyfork.org/en/users/1382928-exyezed)
 
-## Spotify Enhancer (Track & Playlist Downloader)
+## 1. Spotify Enhancer (Track & Playlist Downloader)
 
-Add download buttons to Spotify tracks and playlists on the web player, 128Kbps MP3 quality.
+Add download buttons to Spotify tracks and playlists on the web player, allowing downloads in `128kbps.`
 
 #### [Install Script](https://update.greasyfork.org/scripts/514271/Spotify%20Enhancer%20%28Track%20%20Playlist%20Downloader%29.user.js)
+
+## 2. Spotify Enhancer (Track Downloader)
+
+Add download buttons for Spotify tracks on the web player, allowing downloads in `320kbps.`
+
+> [!WARNING]
+> The advantage of this script is its ability to download audio in high quality at 320kbps. However, it has the drawback of not being able to embed cover art, which I'm currently working on.
+
+#### [Install Script](https://update.greasyfork.org/scripts/514322/Spotify%20Enhancer%20%28Track%20Downloader%29.user.js)
 
 ![image](https://github.com/user-attachments/assets/31474971-2e0e-4d01-910d-5974f4238091)
 
