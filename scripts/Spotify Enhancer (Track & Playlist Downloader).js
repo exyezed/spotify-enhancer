@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Track & Playlist Downloader)
 // @description  Add download buttons to Spotify tracks and playlists, enabling quick downloads directly from the Spotify Web Player.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.0
+// @version      1.1
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -49,6 +49,14 @@ style.innerText = `
     transform: scale(1.1);
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     background: linear-gradient(135deg, #00ff69, #00ab46);
+}
+.btn.loading::after {
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" fill="none"><g fill="%23ffffff" fill-rule="evenodd" clip-rule="evenodd"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8z" opacity=".2"></path><path d="M7.25.75A.75.75 0 018 0a8 8 0 018 8 .75.75 0 01-1.5 0A6.5 6.5 0 008 1.5a.75.75 0 01-.75-.75z"></path></g></svg>');
+    animation: spin 2.5s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 [data-testid='tracklist-row'] .btn {
     position: absolute;
@@ -114,25 +122,32 @@ function sanitizeFileName(name) {
     return name.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, ' ').trim();
 }
 
-function download(path, trackInfo) {
+async function download(path, trackInfo, button) {
+    button.classList.add('loading');
+    
     const downloadUrl = `https://yank.g3v.co.uk/${path}`;
     
-    if (trackInfo) {
-        let fileName;
-        if (path.startsWith('playlist/')) {
-            fileName = sanitizeFileName(`${trackInfo.title}.zip`);
+    try {
+        if (trackInfo) {
+            let fileName;
+            if (path.startsWith('playlist/')) {
+                fileName = sanitizeFileName(`${trackInfo.title}.zip`);
+            } else {
+                fileName = sanitizeFileName(`${trackInfo.title} - ${trackInfo.artist}.mp3`);
+            }
+            
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         } else {
-            fileName = sanitizeFileName(`${trackInfo.title} - ${trackInfo.artist}.mp3`);
+            window.open(downloadUrl, '_blank');
         }
-        
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    } else {
-        window.open(downloadUrl, '_blank');
+    } finally {
+        await sleep(1000);
+        button.classList.remove('loading');
     }
 }
 
@@ -151,7 +166,7 @@ function animate() {
                     if (trackLink) {
                         const spotifyId = trackLink.href.split('/').pop().split('?')[0];
                         const trackInfo = getTrackInfoFromArtist(track);
-                        download(`track/${spotifyId}`, trackInfo);
+                        await download(`track/${spotifyId}`, trackInfo, this);
                     }
                 }
             }
@@ -169,7 +184,7 @@ function animate() {
                     document.dispatchEvent(new MouseEvent('mousedown'));
                     const spotifyId = highlight.split(':')[2];
                     const trackInfo = getTrackInfo(track);
-                    download(`track/${spotifyId}`, trackInfo);
+                    await download(`track/${spotifyId}`, trackInfo, this);
                 }
             }
         }
@@ -178,7 +193,7 @@ function animate() {
     if (type === 'playlist' || type === 'track') {
         const actionBarRow = document.querySelector('[data-testid="action-bar-row"]:last-of-type');
         if (actionBarRow && !actionBarRow.hasButton) {
-            addButton(actionBarRow).onclick = function () {
+            addButton(actionBarRow).onclick = async function () {
                 const id = urlParts[4].split('?')[0];
                 if (type === 'track') {
                     const titleElement = document.querySelector('h1');
@@ -187,10 +202,10 @@ function animate() {
                         title: titleElement.textContent.trim(),
                         artist: artistElement.textContent.trim()
                     } : null;
-                    download(`track/${id}`, trackInfo);
+                    await download(`track/${id}`, trackInfo, this);
                 } else {
                     const playlistInfo = getPlaylistInfo();
-                    download(`playlist/${id}`, playlistInfo);
+                    await download(`playlist/${id}`, playlistInfo, this);
                 }
             }
         }
