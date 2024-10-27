@@ -23,7 +23,7 @@ Add download buttons to Spotify tracks and playlists on the web player, allowing
 Add download buttons for Spotify tracks on the web player, allowing downloads in `320kbps.`
 
 > [!WARNING]
-> The advantage of this script is its ability to download audio in high quality at 320kbps. However, it has the drawback of not being able to embed cover art, which I'm currently working on.
+> This script can download audio at 320kbps but does not support embedding cover art.
 
 #### [Install Script](https://update.greasyfork.org/scripts/514322/Spotify%20Enhancer%20%28Track%20Downloader%29.user.js)
 
