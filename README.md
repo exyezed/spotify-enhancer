@@ -10,7 +10,7 @@
 
 ## 1. Spotify Enhancer (Track & Playlist Downloader)
 
-Integrate download buttons for playlists in the Spotify web player, allowing downloads at `128kbps.`
+Integrate a download button for tracks and playlists on Spotify Web to download audio at `128kbps.`
 
 #### [Install Script](https://update.greasyfork.org/scripts/514271/Spotify%20Enhancer%20%28Track%20%20Playlist%20Downloader%29.user.js)
 
@@ -20,7 +20,7 @@ Integrate download buttons for playlists in the Spotify web player, allowing dow
 
 ## 2. Spotify Enhancer (Track Downloader)
 
-Integrate download buttons for tracks in the Spotify web player, allowing downloads at `320kbps.`
+Integrate a download button for tracks on Spotify Web to download audio at `320kbps.`
 
 > [!WARNING]
 > This script can download audio at 320kbps but does not support embedding cover art.
