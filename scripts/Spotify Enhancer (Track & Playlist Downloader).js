@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Track & Playlist Downloader)
-// @description  Integrate download buttons for playlists in the Spotify web player, allowing downloads at 128kbps.
+// @description  Integrate a download button for tracks and playlists on Spotify Web to download audio at 128kbps
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
 // @version      1.1
 // @author       exyezed
