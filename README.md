@@ -14,6 +14,10 @@ Add download buttons to Spotify tracks and playlists on the web player, allowing
 
 #### [Install Script](https://update.greasyfork.org/scripts/514271/Spotify%20Enhancer%20%28Track%20%20Playlist%20Downloader%29.user.js)
 
+![image](https://github.com/user-attachments/assets/31474971-2e0e-4d01-910d-5974f4238091)
+
+#### Thanks to [G3VV](https://github.com/G3VV/Yank)
+
 ## 2. Spotify Enhancer (Track Downloader)
 
 Add download buttons for Spotify tracks on the web player, allowing downloads in `320kbps.`
@@ -23,6 +27,6 @@ Add download buttons for Spotify tracks on the web player, allowing downloads in
 
 #### [Install Script](https://update.greasyfork.org/scripts/514322/Spotify%20Enhancer%20%28Track%20Downloader%29.user.js)
 
-![image](https://github.com/user-attachments/assets/31474971-2e0e-4d01-910d-5974f4238091)
+![image](https://github.com/user-attachments/assets/03841a35-6746-4e57-8cd2-fe022512ea1c)
 
-#### Thanks to [G3VV](https://github.com/G3VV/Yank)
+#### Thanks to [SpotifyDown](https://spotifydown.com)
