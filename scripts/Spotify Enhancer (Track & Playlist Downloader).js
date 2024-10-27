@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Track & Playlist Downloader)
-// @description  Add download buttons to Spotify tracks and playlists, enabling quick downloads directly from the Spotify Web Player.
+// @description  Add download buttons to Spotify tracks and playlists on the web player, 128Kbps MP3 quality.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
 // @version      1.1
 // @author       exyezed
