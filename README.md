@@ -27,7 +27,7 @@ Integrate a download button for tracks on Spotify Web to download audio at `320k
 
 #### [Install Script](https://update.greasyfork.org/scripts/514322/Spotify%20Enhancer%20%28Track%20Downloader%29.user.js)
 
-![image](https://github.com/user-attachments/assets/03841a35-6746-4e57-8cd2-fe022512ea1c)
+![image](https://github.com/user-attachments/assets/bcf1f087-5b18-4ff6-af5e-784368e70581)
 
 #### Thanks to [SpotifyDown](https://spotifydown.com)
 
