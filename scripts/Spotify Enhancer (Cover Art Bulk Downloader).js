@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Spotify Enhancer (Artwork Bulk Downloader)
-// @description  Integrates a download button into Spotify Web Player for bulk downloading album artwork.
+// @name         Spotify Enhancer (Cover Art Bulk Downloader)
+// @description  Integrates a download button in Spotify Web Player for bulk album cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.0
+// @version      1.1
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -221,7 +221,7 @@
         overlay.className = 'download-progress-overlay';
         overlay.innerHTML = `
             <div class="progress-container">
-                <div class="progress-title">Downloading Artwork</div>
+                <div class="progress-title">Downloading Cover Art</div>
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
                 </div>
@@ -238,7 +238,7 @@
         const percentage = (current / total) * 100;
 
         progressFill.style.width = `${percentage}%`;
-        progressStatus.textContent = status || `Downloading ${current} of ${total} artworks`;
+        progressStatus.textContent = status || `Downloading ${current} of ${total} cover arts`;
     }
 
     function getPlaylistId() {
@@ -340,7 +340,7 @@
                     const filename = sanitizeFilename(`${track.title} - ${track.artists}.jpeg`);
                     zip.file(filename, imageBlob);
                 } catch (error) {
-                    console.error(`Failed to download artwork for ${track.title}:`, error);
+                    console.error(`Failed to download cover art for ${track.title}:`, error);
                 }
             }
 
@@ -359,9 +359,9 @@
             document.body.removeChild(overlay);
 
         } catch (error) {
-            console.error('Error downloading artwork:', error);
+            console.error('Error downloading cover art:', error);
             if (!abortDownload) {
-                alert('Failed to download artwork. Please try again.');
+                alert('Failed to download cover art. Please try again.');
             }
             if (overlay) {
                 document.body.removeChild(overlay);
@@ -382,8 +382,8 @@
     function createDownloadButton() {
         const button = document.createElement('button');
         button.className = 'Button-sc-1dqy6lx-0 dbhFGF download-button';
-        button.setAttribute('aria-label', 'Download All Artworks');
-        button.setAttribute('title', 'Download All Artworks');
+        button.setAttribute('aria-label', 'Download All Cover Art');
+        button.setAttribute('title', 'Download All Cover Art');
         button.setAttribute('data-encore-id', 'buttonTertiary');
     
         button.innerHTML = `
