@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Full-Sized Artwork Downloader)
 // @description  Integrates an overlay button into Spotify Web Player for viewing and downloading full-sized (2000px) album artwork.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.0
+// @version      1.1
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -16,7 +16,7 @@
 
     const materialIconsLink = document.createElement('link');
     materialIconsLink.rel = 'stylesheet';
-    materialIconsLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add_photo_alternate,download';
+    materialIconsLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add_photo_alternate,download,open_in_new';
     document.head.appendChild(materialIconsLink);
 
     const styles = `
@@ -159,7 +159,7 @@
             color: white;
             font-size: 30px;
             cursor: pointer;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(32, 32, 32, 0.9);
             border: none;
             padding: 10px;
             border-radius: 50%;
@@ -170,10 +170,11 @@
             justify-content: center;
             transition: all 0.3s ease;
             font-family: var(--spotify-font-stack);
+            backdrop-filter: blur(5px);
         }
 
         .modal-button:hover {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(45, 45, 45, 0.95);
             transform: scale(1.1);
         }
 
@@ -183,6 +184,10 @@
 
         .modal-button.close-button:hover {
             color: #f3727f;
+        }
+
+        .modal-button.open-tab-button:hover {
+            color: #4cb3ff;
         }
 
         .loading-spinner {
@@ -292,6 +297,20 @@
         const controls = document.createElement('div');
         controls.className = 'modal-controls';
         
+        const openTabButton = document.createElement('button');
+        openTabButton.className = 'modal-button open-tab-button';
+        const openTabIcon = document.createElement('span');
+        openTabIcon.className = 'material-symbols-outlined';
+        openTabIcon.textContent = 'open_in_new';
+        openTabButton.appendChild(openTabIcon);
+        
+        const downloadButton = document.createElement('button');
+        downloadButton.className = 'modal-button download-button';
+        const downloadIcon = document.createElement('span');
+        downloadIcon.className = 'material-symbols-outlined';
+        downloadIcon.textContent = 'download';
+        downloadButton.appendChild(downloadIcon);
+        
         const closeButton = document.createElement('button');
         closeButton.className = 'modal-button close-button';
         closeButton.innerHTML = '×';
@@ -308,13 +327,7 @@
             img.src = '';
         };
         
-        const downloadButton = document.createElement('button');
-        downloadButton.className = 'modal-button download-button';
-        const downloadIcon = document.createElement('span');
-        downloadIcon.className = 'material-symbols-outlined';
-        downloadIcon.textContent = 'download';
-        downloadButton.appendChild(downloadIcon);
-        
+        controls.appendChild(openTabButton);
         controls.appendChild(downloadButton);
         controls.appendChild(closeButton);
 
@@ -359,16 +372,21 @@
     }
 
     function getFullsizeUrl(originalUrl) {
-        const sizePatterns = [
-            'ab67616d00004851',
-            'ab67616d0000b273',
-            'ab67616d00001e02'
-        ];
+        const resolutionPatterns = {
+            'ab67616d00004851': 'ab67616d000082c1',
+            'ab67616d0000b273': 'ab67616d000082c1',
+            'ab67616d00001e02': 'ab67616d000082c1',
+            
+            'ab67616100005174': 'ab6761610000e5eb',
+            'ab6761610000f174': 'ab6761610000e5eb',
+            'ab676161000051748': 'ab6761610000e5eb',
+            'ab67616100000000': 'ab6761610000e5eb'
+        };
 
         let newUrl = originalUrl;
-        for (const pattern of sizePatterns) {
+        for (const [pattern, replacement] of Object.entries(resolutionPatterns)) {
             if (originalUrl.includes(pattern)) {
-                newUrl = originalUrl.replace(pattern, 'ab67616d000082c1');
+                newUrl = originalUrl.replace(pattern, replacement);
                 break;
             }
         }
@@ -419,6 +437,13 @@
                     e.preventDefault();
                     e.stopPropagation();
                     downloadImage(fullsizeUrl, title);
+                };
+
+                const openTabButton = modal.querySelector('.open-tab-button');
+                openTabButton.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.open(fullsizeUrl, '_blank');
                 };
 
                 return false;
