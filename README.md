@@ -6,6 +6,9 @@
 > [!CAUTION]
 > This userscript is intended for personal use only. Please respect Spotify's Terms of Service and avoid using this tool for commercial purposes or redistributing downloaded content.
 
+> [!WARNING]
+> If the download fails, there may be an issue on the server side.
+
 #### [Greasy Fork](https://greasyfork.org/en/users/1382928-exyezed)
 
 ## 1. Spotify Enhancer (Track & Playlist Downloader)
@@ -22,7 +25,7 @@ Integrate a download button for tracks and playlists on Spotify Web to download 
 
 Integrate a download button for tracks on Spotify Web to download audio at `320kbps.`
 
-> [!WARNING]
+> [!NOTE]
 > This script can download audio at 320kbps but does not support embedding cover art.
 
 #### [Install Script](https://update.greasyfork.org/scripts/514322/Spotify%20Enhancer%20%28Track%20Downloader%29.user.js)
