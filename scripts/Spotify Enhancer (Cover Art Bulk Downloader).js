@@ -246,11 +246,11 @@
         return match ? match[1] : null;
     }
 
-    async function fetchArtworkData(playlistId) {
+    async function fetchCoverData(playlistId) {
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: `https://exyezed.vercel.app/api/artwork/${playlistId}`,
+                url: `https://exyezed.vercel.app/api/cover/${playlistId}`,
                 onload: function(response) {
                     try {
                         const data = JSON.parse(response.responseText);
@@ -285,7 +285,7 @@
 
     let abortDownload = false;
 
-    async function downloadArtwork() {
+    async function downloadCover() {
         let overlay = null;
         try {
             const playlistId = getPlaylistId();
@@ -305,7 +305,7 @@
                 }
             }
 
-            const artworkData = await fetchArtworkData(playlistId);
+            const coverData = await fetchCoverData(playlistId);
 
             if (button) {
                 button.classList.remove('loading');
@@ -326,14 +326,14 @@
             });
 
             const zip = new JSZip();
-            const total = artworkData.track_list.length;
+            const total = coverData.track_list.length;
 
             for (let i = 0; i < total; i++) {
                 if (abortDownload) {
                     throw new Error('Download cancelled by user');
                 }
 
-                const track = artworkData.track_list[i];
+                const track = coverData.track_list[i];
                 try {
                     updateProgress(overlay, i + 1, total);
                     const imageBlob = await fetchImageAsBlob(track.cover);
@@ -350,7 +350,7 @@
             const zipUrl = URL.createObjectURL(zipBlob);
             const downloadLink = document.createElement('a');
             downloadLink.href = zipUrl;
-            downloadLink.download = sanitizeFilename(`${artworkData.artwork_title}.zip`);
+            downloadLink.download = sanitizeFilename(`${coverData.cover_title}.zip`);
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
@@ -394,7 +394,7 @@
             </span>
         `;
     
-        button.addEventListener('click', downloadArtwork);
+        button.addEventListener('click', downloadCover);
         return button;
     }
 
