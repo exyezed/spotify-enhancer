@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Spotify Enhancer (Full-Sized Artwork Downloader)
-// @description  Integrates an overlay button into Spotify Web Player for viewing and downloading full-sized (2000px) album artwork.
+// @name         Spotify Enhancer (Full-Sized Cover Art Downloader)
+// @description  Integrates an overlay button in Spotify Web Player to view and download full-sized (2000px) album cover art.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.1
+// @version      1.2
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
