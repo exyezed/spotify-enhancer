@@ -2,12 +2,12 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Integrates a download button in Spotify Web Player for bulk album cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.1
+// @version      1.2
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
 // @license      MIT
-// @match        https://open.spotify.com/playlist/*
+// @match        https://open.spotify.com/*
 // @grant        GM_addStyle
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
@@ -421,48 +421,97 @@
         return button;
     }
 
-    function addButtons() {
+    function waitForElement(selector, timeout = 5000) {
+        return new Promise((resolve, reject) => {
+            if (document.querySelector(selector)) {
+                return resolve(document.querySelector(selector));
+            }
+
+            const observer = new MutationObserver((mutations) => {
+                if (document.querySelector(selector)) {
+                    observer.disconnect();
+                    resolve(document.querySelector(selector));
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            setTimeout(() => {
+                observer.disconnect();
+                reject(new Error(`Timeout waiting for element: ${selector}`));
+            }, timeout);
+        });
+    }
+
+    async function addButtons() {
         if (!window.location.pathname.startsWith('/playlist/')) {
             return;
         }
 
-        const actionBar = document.querySelector('[data-testid="action-bar-row"]');
-        if (!actionBar) return;
+        try {
+            const actionBar = await waitForElement('[data-testid="action-bar-row"]');
+            const moreButton = await waitForElement('[data-testid="more-button"]');
 
-        const moreButton = actionBar.querySelector('[data-testid="more-button"]');
-        if (!moreButton) return;
-
-        if (!actionBar.querySelector('.download-button')) {
-            const downloadButton = createDownloadButton();
-            if (downloadButton) {
-                moreButton.parentNode.insertBefore(downloadButton, moreButton.nextSibling);
-            }
-        }
-
-        if (!actionBar.querySelector('.resolution-toggle')) {
-            const resolutionToggle = createResolutionToggle();
-            if (resolutionToggle) {
-                const downloadButton = actionBar.querySelector('.download-button');
+            if (!actionBar.querySelector('.download-button')) {
+                const downloadButton = createDownloadButton();
                 if (downloadButton) {
-                    downloadButton.parentNode.insertBefore(resolutionToggle, downloadButton.nextSibling);
+                    moreButton.parentNode.insertBefore(downloadButton, moreButton.nextSibling);
                 }
             }
+
+            if (!actionBar.querySelector('.resolution-toggle')) {
+                const resolutionToggle = createResolutionToggle();
+                if (resolutionToggle) {
+                    const downloadButton = actionBar.querySelector('.download-button');
+                    if (downloadButton) {
+                        downloadButton.parentNode.insertBefore(resolutionToggle, downloadButton.nextSibling);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Failed to add buttons:', error);
+            setTimeout(() => addButtons(), 1000);
         }
     }
 
-    function init() {
+    function handleRouteChange() {
         if (!window.location.pathname.startsWith('/playlist/')) {
+            const existingButtons = document.querySelectorAll('.download-button, .resolution-toggle');
+            existingButtons.forEach(button => button.remove());
             return;
         }
 
         addButtons();
+    }
+
+    function init() {
+        handleRouteChange();
+
+        const pushState = history.pushState;
+        const replaceState = history.replaceState;
+
+        history.pushState = function() {
+            pushState.apply(history, arguments);
+            handleRouteChange();
+        };
+
+        history.replaceState = function() {
+            replaceState.apply(history, arguments);
+            handleRouteChange();
+        };
+
+        window.addEventListener('popstate', handleRouteChange);
 
         const observer = new MutationObserver((mutations) => {
             if (window.location.pathname.startsWith('/playlist/')) {
-                for (const mutation of mutations) {
-                    if (mutation.addedNodes.length) {
-                        addButtons();
-                    }
+                const actionBar = document.querySelector('[data-testid="action-bar-row"]');
+                const hasButtons = document.querySelector('.download-button');
+                
+                if (actionBar && !hasButtons) {
+                    addButtons();
                 }
             }
         });
@@ -472,15 +521,6 @@
             subtree: true
         });
     }
-
-    let lastUrl = location.href;
-    new MutationObserver(() => {
-        const url = location.href;
-        if (url !== lastUrl) {
-            lastUrl = url;
-            init();
-        }
-    }).observe(document, {subtree: true, childList: true});
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
