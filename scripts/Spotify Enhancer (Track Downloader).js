@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Track Downloader)
-// @description  Integrate a download button for tracks on Spotify Web to download audio at 320kbps.
+// @description  Integrate a download button for tracks on Spotify Web to download audio at 320kbps
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.1
+// @version      1.2
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -24,58 +24,90 @@ const RETRY_CONFIG = {
     backoffFactor: 2
 };
 
+function isOtherDownloaderInstalled() {
+    return document.querySelector('.btn') !== null;
+}
+
+function getStyles() {
+    const otherInstalled = isOtherDownloaderInstalled();
+    const marginLeft = otherInstalled ? '90px' : '50px';
+    const buttonMarginRight = otherInstalled ? '60px' : '10px';
+
+    return `
+    [role='grid'] {
+        margin-left: ${marginLeft};
+    }
+    [data-testid='tracklist-row'] {
+        position: relative;
+    }
+    [role="presentation"] > * {
+        contain: unset;
+    }
+    .btn-320 {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 0;
+        background: linear-gradient(135deg, #00da5a, #008f3b);
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-320::after {
+        content: '';
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="%23ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="32" stroke-dashoffset="32" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="32;0"/><set fill="freeze" attributeName="stroke-dasharray" begin="0.8s" to="2 4"/></path><path stroke-dasharray="32" stroke-dashoffset="32" d="M12 21c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="32;0"/></path><path stroke-dasharray="10" stroke-dashoffset="10" d="M12 8v7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="10;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 15.5l3.5 -3.5M12 15.5l-3.5 -3.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1s" dur="0.2s" values="6;0"/></path></g></svg>');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: 100%;
+    }
+    .btn-320:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        background: linear-gradient(135deg, #00ff69, #00ab46);
+    }
+    .btn-320.loading::after {
+        background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="%23ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="2 4" stroke-dashoffset="6" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9"><animate attributeName="stroke-dashoffset" dur="0.6s" repeatCount="indefinite" values="6;0"/></path><path stroke-dasharray="32" stroke-dashoffset="32" d="M12 21c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.1s" dur="0.4s" values="32;0"/></path><path stroke-dasharray="10" stroke-dashoffset="10" d="M12 8v7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="10;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 15.5l3.5 -3.5M12 15.5l-3.5 -3.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="6;0"/></path></g></svg>');
+    }
+    [data-testid='tracklist-row'] .btn-320 {
+        position: absolute;
+        top: 50%;
+        right: 100%;
+        margin-top: -20px;
+        margin-right: ${buttonMarginRight};
+    }
+    `;
+}
+
+function updateStyles() {
+    const styleElement = document.getElementById('spotify-enhancer-320-styles');
+    if (styleElement) {
+        styleElement.innerHTML = getStyles();
+    }
+}
+
 const style = document.createElement('style');
-style.innerText = `
-[role='grid'] {
-    margin-left: 50px;
-}
-[data-testid='tracklist-row'] {
-    position: relative;
-}
-[role="presentation"] > * {
-    contain: unset;
-}
-.btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 0;
-    background: linear-gradient(135deg, #00da5a, #008f3b);
-    position: relative;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.btn::after {
-    content: '';
-    position: absolute;
-    width: 28px;
-    height: 28px;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="%23ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="32" stroke-dashoffset="32" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9"><animate fill="freeze" attributeName="stroke-dashoffset" dur="0.4s" values="32;0"/><set fill="freeze" attributeName="stroke-dasharray" begin="0.8s" to="2 4"/></path><path stroke-dasharray="32" stroke-dashoffset="32" d="M12 21c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.4s" dur="0.4s" values="32;0"/></path><path stroke-dasharray="10" stroke-dashoffset="10" d="M12 8v7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.8s" dur="0.2s" values="10;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 15.5l3.5 -3.5M12 15.5l-3.5 -3.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="1s" dur="0.2s" values="6;0"/></path></g></svg>');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 100%;
-}
-.btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    background: linear-gradient(135deg, #00ff69, #00ab46);
-}
-.btn.loading::after {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><g fill="none" stroke="%23ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path stroke-dasharray="2 4" stroke-dashoffset="6" d="M12 3c4.97 0 9 4.03 9 9c0 4.97 -4.03 9 -9 9"><animate attributeName="stroke-dashoffset" dur="0.6s" repeatCount="indefinite" values="6;0"/></path><path stroke-dasharray="32" stroke-dashoffset="32" d="M12 21c-4.97 0 -9 -4.03 -9 -9c0 -4.97 4.03 -9 9 -9"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.1s" dur="0.4s" values="32;0"/></path><path stroke-dasharray="10" stroke-dashoffset="10" d="M12 8v7.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.5s" dur="0.2s" values="10;0"/></path><path stroke-dasharray="6" stroke-dashoffset="6" d="M12 15.5l3.5 -3.5M12 15.5l-3.5 -3.5"><animate fill="freeze" attributeName="stroke-dashoffset" begin="0.7s" dur="0.2s" values="6;0"/></path></g></svg>');
-}
-[data-testid='tracklist-row'] .btn {
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    margin-top: -20px;
-    margin-right: 10px;
-}
-`;
+style.id = 'spotify-enhancer-320-styles';
+style.innerHTML = getStyles();
 document.body.appendChild(style);
+
+const observer = new MutationObserver(() => {
+    if (isOtherDownloaderInstalled()) {
+        updateStyles();
+        observer.disconnect();
+    }
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
 
 async function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -111,7 +143,7 @@ async function downloadWithRetry(spotifyId, trackInfo) {
     let currentDelay = RETRY_CONFIG.initialDelay;
     let attempts = 0;
 
-    while (true) { // Infinite retry loop
+    while (true) {
         try {
             const response = await attemptDownload(spotifyId);
 
@@ -133,7 +165,6 @@ async function downloadWithRetry(spotifyId, trackInfo) {
 
             await delay(currentDelay);
 
-            // Increase delay with backoff, but cap at maxDelay
             currentDelay = Math.min(
                 currentDelay * RETRY_CONFIG.backoffFactor,
                 RETRY_CONFIG.maxDelay
@@ -191,7 +222,7 @@ function animate() {
         const tracks = document.querySelectorAll('[role="gridcell"]');
         for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i];
-            if (track.querySelector('.encore-text-body-medium') && !track.hasButton) {
+            if (track.querySelector('.encore-text-body-medium') && !track.hasButton320) {
                 addButton(track).onclick = async function() {
                     const trackLink = track.querySelector('a[href^="/track"]');
                     if (trackLink) {
@@ -206,7 +237,7 @@ function animate() {
         const tracks = document.querySelectorAll('[data-testid="tracklist-row"]');
         for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i];
-            if (!track.hasButton) {
+            if (!track.hasButton320) {
                 addButton(track).onclick = async function() {
                     const btn = track.querySelector('[data-testid="more-button"]');
                     btn.click();
@@ -223,7 +254,7 @@ function animate() {
 
     if (type === 'track') {
         const actionBarRow = document.querySelector('[data-testid="action-bar-row"]:last-of-type');
-        if (actionBarRow && !actionBarRow.hasButton) {
+        if (actionBarRow && !actionBarRow.hasButton320) {
             addButton(actionBarRow).onclick = function() {
                 const id = urlParts[4].split('?')[0];
                 const titleElement = document.querySelector('h1');
@@ -240,10 +271,10 @@ function animate() {
 
 function addButton(el) {
     const button = document.createElement('button');
-    button.className = 'btn';
-    button.title = 'Download';
+    button.className = 'btn-320';
+    button.title = 'Download 320kbps';
     el.appendChild(button);
-    el.hasButton = true;
+    el.hasButton320 = true;
     return button;
 }
 
