@@ -57,3 +57,11 @@ Integrates a download button in Spotify Web Player for bulk album cover art down
 > Enable the toggle if you want to download cover art at full-size resolution (2000px)
 
 ![image](https://github.com/user-attachments/assets/56855b38-8303-427f-b5a6-28468159c327)
+
+## 5. Spotify Enhancer (Clickable Playlist Tracks)
+
+Makes individual track titles clickable in Spotify playlists for quick access in list mode.
+
+#### [Install Script](https://update.greasyfork.org/scripts/514571/Spotify%20Enhancer%20%28Clickable%20Playlist%20Tracks%29.user.js)
+
+![Code_O75SzH1VG1](https://github.com/user-attachments/assets/387a5b90-6b7d-4fd3-bbcb-5c2bae39dcc3)
