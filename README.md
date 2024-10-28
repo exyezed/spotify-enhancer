@@ -42,3 +42,15 @@ Integrates an overlay button into Spotify Web Player for viewing and downloading
 ![image](https://github.com/user-attachments/assets/1e1a1650-2fcd-4ec8-aa1f-00efcde424c1)
 
 ![image](https://github.com/user-attachments/assets/2198488b-8777-4038-8890-89322aa878a1)
+
+## 4. Spotify Enhancer (Artwork Bulk Downloader)
+
+Integrates a download button into Spotify Web Player for bulk downloading album artwork.
+
+#### [Install Script](https://update.greasyfork.org/scripts/514421/Spotify%20Enhancer%20%28Artwork%20Bulk%20Downloader%29.user.js)
+
+![image](https://github.com/user-attachments/assets/9ca403d6-c3c0-4bd8-895e-1627df1d62e5)
+
+> Enable the toggle if you want to download artwork at full-size resolution (2000px)
+
+![image](https://github.com/user-attachments/assets/56855b38-8303-427f-b5a6-28468159c327)
