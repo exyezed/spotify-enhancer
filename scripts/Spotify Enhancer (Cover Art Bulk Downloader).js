@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Integrates a download button in Spotify Web Player for bulk album cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.2
+// @version      1.3
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -250,7 +250,7 @@
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: `https://exyezed.vercel.app/api/cover/${playlistId}`,
+                url: `https://exyezed.vercel.app/api/playlist/${playlistId}`,
                 onload: function(response) {
                     try {
                         const data = JSON.parse(response.responseText);
