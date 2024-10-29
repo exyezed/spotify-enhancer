@@ -2,12 +2,12 @@
 // @name         Spotify Enhancer (Clickable Playlist Tracks)
 // @description  Makes individual track titles clickable in Spotify playlists for quick access in list mode.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.0
+// @version      1.1
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
 // @license      MIT
-// @match        https://open.spotify.com/playlist/*
+// @match        https://open.spotify.com/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
@@ -21,6 +21,8 @@
     };
 
     let trackDataMap = new Map();
+    let isInitialized = false;
+    let currentPlaylistId = null;
 
     function getPlaylistId() {
         const pathname = window.location.pathname;
@@ -128,17 +130,10 @@
         });
     }
 
-    async function init() {
-        document.querySelectorAll('div[data-encore-id="text"].encore-text-body-medium').forEach(makeClickable);
-
-        const observer = new MutationObserver(processNewElements);
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
+    async function initializePlaylist() {
         const playlistId = getPlaylistId();
-        if (playlistId) {
+        if (playlistId && playlistId !== currentPlaylistId) {
+            currentPlaylistId = playlistId;
             try {
                 const trackMap = await fetchTrackData(playlistId);
                 updateLinks(trackMap);
@@ -148,16 +143,70 @@
         }
     }
 
-    window.addEventListener('load', init);
-    
+    function waitForElements() {
+        return new Promise(resolve => {
+            const checkElements = () => {
+                const elements = document.querySelectorAll('div[data-encore-id="text"].encore-text-body-medium');
+                if (elements.length > 0) {
+                    resolve();
+                } else {
+                    setTimeout(checkElements, 100);
+                }
+            };
+            checkElements();
+        });
+    }
+
+    async function init() {
+        if (isInitialized) return;
+        isInitialized = true;
+
+        await waitForElements();
+
+        document.querySelectorAll('div[data-encore-id="text"].encore-text-body-medium').forEach(makeClickable);
+
+        const observer = new MutationObserver(processNewElements);
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+        await initializePlaylist();
+    }
+
+    const routeObserver = new MutationObserver(() => {
+        const playlistId = getPlaylistId();
+        if (playlistId) {
+            init();
+        } else {
+            isInitialized = false;
+            currentPlaylistId = null;
+            trackDataMap.clear();
+        }
+    });
+
+    routeObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    if (getPlaylistId()) {
+        init();
+    }
+
     let lastUrl = location.href;
-    new MutationObserver(() => {
+    const urlObserver = new MutationObserver(() => {
         const url = location.href;
         if (url !== lastUrl) {
             lastUrl = url;
+            isInitialized = false;
+            currentPlaylistId = null;
             trackDataMap.clear();
-            init();
+            if (getPlaylistId()) {
+                init();
+            }
         }
-    }).observe(document, { subtree: true, childList: true });
+    });
+    urlObserver.observe(document, { subtree: true, childList: true });
 
 })();
