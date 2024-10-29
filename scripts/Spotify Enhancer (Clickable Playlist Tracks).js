@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Clickable Playlist Tracks)
 // @description  Makes individual track titles clickable in Spotify playlists for quick access in list mode.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.1
+// @version      1.2
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -53,6 +53,27 @@
         });
     }
 
+    function triggerSpotifyNavigation(url) {
+        const popStateEvent = new PopStateEvent('popstate', {
+            state: { key: Math.random().toString(36).slice(2) }
+        });
+        window.dispatchEvent(popStateEvent);
+
+        const navigationEvent = new CustomEvent('spotify:navigation', {
+            detail: { url }
+        });
+        window.dispatchEvent(navigationEvent);
+    }
+
+    function handleTrackClick(e, trackId) {
+        e.preventDefault();
+        const newUrl = `/track/${trackId}`;
+        
+        window.history.pushState({}, '', newUrl);
+        
+        triggerSpotifyNavigation(newUrl);
+    }
+
     function makeClickable(element) {
         if (element.hasAttribute('data-processed')) return;
         
@@ -62,7 +83,7 @@
         link.textContent = titleText;
         link.style.textDecoration = 'none';
         link.style.color = COLORS.default;
-        link.style.transition = 'color 0.2s ease';
+        link.style.transition = 'all 0.2s ease';
         link.classList.add('spotify-track-link');
         link.setAttribute('data-title', titleText);
         
@@ -91,16 +112,25 @@
 
     function updateSingleLink(link, trackData) {
         link.href = `https://open.spotify.com/track/${trackData.id}`;
-        link.target = '_blank';
         link.style.color = COLORS.active;
         link.style.cursor = 'pointer';
         
-        link.addEventListener('mouseover', () => {
-            link.style.color = COLORS.hover;
+        const newLink = link.cloneNode(true);
+        link.parentNode.replaceChild(newLink, link);
+        
+        newLink.addEventListener('mouseover', () => {
+            newLink.style.color = COLORS.hover;
+            newLink.style.textDecoration = 'underline';
+            newLink.style.textDecorationColor = '#ffffff';
         });
         
-        link.addEventListener('mouseout', () => {
-            link.style.color = COLORS.active;
+        newLink.addEventListener('mouseout', () => {
+            newLink.style.color = COLORS.active;
+            newLink.style.textDecoration = 'none';
+        });
+
+        newLink.addEventListener('click', (e) => {
+            handleTrackClick(e, trackData.id);
         });
     }
 
