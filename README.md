@@ -65,3 +65,15 @@ Makes individual track titles clickable in Spotify playlists for quick access in
 #### [Install Script](https://update.greasyfork.org/scripts/514571/Spotify%20Enhancer%20%28Clickable%20Playlist%20Tracks%29.user.js)
 
 ![Code_O75SzH1VG1](https://github.com/user-attachments/assets/387a5b90-6b7d-4fd3-bbcb-5c2bae39dcc3)
+
+## 6. Spotify Enhancer (Copy Track Info, ID & Link)
+
+Integrates copy button with options in Spotify Web Player for easy access to track information, IDs, and links.
+
+> [!IMPORTANT]
+> Highly recommended to combine with the **Spotify Enhancer (Clickable Playlist Tracks)** script to successfully copy track IDs or links on the playlist page.
+
+#### [Install Script](https://update.greasyfork.org/scripts/514706/Spotify%20Enhancer%20%28Copy%20Track%20Info%2C%20ID%20%20Link%29.user.js)
+
+![image](https://github.com/user-attachments/assets/40ee6f03-7336-4b6b-808b-0e3f79ee5484)
+
