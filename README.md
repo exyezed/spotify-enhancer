@@ -9,7 +9,7 @@
 > [!WARNING]
 > If the download fails, there may be an issue on the server side.
 
-#### [Greasy Fork](https://greasyfork.org/en/users/1382928-exyezed)
+#### [Greasy Fork](https://greasyfork.org/en/users/1382928-exyezed) | [OpenUserJS](https://openuserjs.org/users/exyezed/scripts)
 
 ## 1. Spotify Enhancer (Track & Playlist Downloader)
 
