@@ -40,9 +40,9 @@ Integrates an overlay button in Spotify Web Player to view and download full-siz
 
 #### [Install Script](https://update.greasyfork.org/scripts/514396/Spotify%20Enhancer%20%28Full-Sized%20Cover%20Art%20Downloader%29.user.js)
 
-![image](https://github.com/user-attachments/assets/2904cd67-66a6-40b5-988c-99b412381c5f)
+![image](https://github.com/user-attachments/assets/706fefb3-bba8-4cf4-8c80-33659f760065)
 
-![image](https://github.com/user-attachments/assets/1e1a1650-2fcd-4ec8-aa1f-00efcde424c1)
+![image](https://github.com/user-attachments/assets/ec6bef7b-a0d2-4560-a922-902af22d6433)
 
 ## 4. Spotify Enhancer (Cover Art Bulk Downloader)
 
