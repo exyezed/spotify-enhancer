@@ -1,46 +1,28 @@
 // ==UserScript==
-// @name         Spotify Enhancer (Full-Sized Cover Art Viewer)
-// @description  Integrates an overlay button in Spotify Web Player to open full-sized (2000px) album cover art in a new tab.
+// @name         Spotify Enhancer (Full-Sized Cover Art Downloader)
+// @description  Integrates an overlay button in Spotify Web Player to view and download full-sized (2000px) album cover art.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.3
+// @version      1.4
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
 // @license      MIT
 // @match        *://open.spotify.com/*
 // @grant        GM_addStyle
+// @require      https://cdn.jsdelivr.net/npm/@iconify/iconify@3.1.1/dist/iconify.min.js
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    const materialIconsLink = document.createElement('link');
-    materialIconsLink.rel = 'stylesheet';
-    materialIconsLink.href = 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=add_photo_alternate';
-    document.head.appendChild(materialIconsLink);
-
     const styles = `
-        :root {
-            --spotify-font-stack: SpotifyMixUI,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,var(--fallback-fonts,sans-serif);
-            --icon-weight: 400;
-            --icon-fill: 1;
-            --icon-grade: 0;
-            --icon-size: 24;
-        }
-
-        .material-symbols-outlined {
-            font-variation-settings:
-                'FILL' var(--icon-fill),
-                'wght' var(--icon-weight),
-                'GRAD' var(--icon-grade),
-                'opsz' var(--icon-size);
-            font-size: 24px;
-            vertical-align: middle;
-        }
-
-        .custom-overlay-button .material-symbols-outlined {
-            --icon-fill: 0;
-            --icon-weight: 400;
+        .preview-modal-title {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+            max-width: 90vw;
+            word-wrap: break-word;
         }
 
         .custom-overlay-button {
@@ -51,8 +33,8 @@
             background: rgba(0, 0, 0, 0.7);
             border: none;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -60,25 +42,243 @@
             color: white;
             transition: all 0.3s ease;
             pointer-events: all !important;
-            font-family: var(--spotify-font-stack);
         }
-        
+
         .custom-overlay-button:hover {
             background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.1);
         }
-        
-        .custom-overlay-button:hover .material-symbols-outlined {
-            --icon-fill: 1; 
+
+        .custom-overlay-button svg {
+            width: 18px;
+            height: 18px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
-        
+
+        .custom-overlay-button .icon-normal {
+            position: absolute;
+        }
+
+        .custom-overlay-button .icon-hover {
+            position: absolute;
+            opacity: 0;
+            color: #1ed760;
+        }
+
+        .custom-overlay-button:hover .icon-normal {
+            opacity: 0;
+        }
+
+        .custom-overlay-button:hover .icon-hover {
+            opacity: 1;
+        }
+
         .custom-overlay-button * {
             pointer-events: none;
+        }
+
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .preview-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .preview-modal-content {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-modal.active .preview-modal-content {
+            transform: scale(1);
+        }
+
+        .preview-modal-content.loading .preview-modal-close,
+        .preview-modal-content.loading .preview-actions {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .preview-modal-content .preview-modal-close,
+        .preview-modal-content .preview-actions {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .preview-modal img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            cursor: pointer;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .preview-modal-close:hover {
+            opacity: 1;
+            color: #f3727f;
+        }
+
+        .preview-actions {
+            margin-top: 16px;
+        }
+
+        .fetch-button {
+            position: relative;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            gap: 6px;
+        }
+
+        .fetch-button:hover {
+            opacity: 1;
+            color: #1ed760;
+        }
+
+        .fetch-button svg {
+            width: 18px !important;
+            height: 18px !important;
+        }
+
+        .fetch-button span {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
         }
     `;
 
     GM_addStyle(styles);
 
+    const modal = document.createElement('div');
+    modal.className = 'preview-modal';
+    document.body.appendChild(modal);
+
+    async function downloadImage(url, filename) {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            const blobUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename + '.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error('Download failed:', error);
+        }
+    }
+
+    function createModal(imageUrl, title) {
+        const content = document.createElement('div');
+        content.className = 'preview-modal-content loading';
+
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'preview-modal-title';
+
+        const closeButton = document.createElement('button');
+        closeButton.className = 'preview-modal-close';
+        closeButton.innerHTML = '<span class="iconify" data-icon="pajamas:close-xs" data-width="24" data-height="24"></span>';
+        closeButton.onclick = (e) => {
+            e.stopPropagation();
+            modal.classList.remove('active');
+        };
+
+        const img = document.createElement('img');
+        img.onload = () => {
+            content.classList.remove('loading');
+            // Update title with image dimensions after load
+            titleDiv.textContent = `${title} (${img.naturalWidth} x ${img.naturalHeight})`;
+            if (window.Iconify) {
+                window.Iconify.scan(content);
+            }
+        };
+        img.src = imageUrl;
+        img.alt = title;
+        img.onclick = () => {
+            window.open(imageUrl, '_blank');
+        };
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'preview-actions';
+
+        const fetchButton = document.createElement('button');
+        fetchButton.className = 'fetch-button';
+        fetchButton.innerHTML = '<span class="iconify" data-icon="mynaui:fat-arrow-down-solid" data-width="18" data-height="18"></span> <span>DOWNLOAD</span>';
+        fetchButton.onclick = (e) => {
+            e.stopPropagation();
+            downloadImage(imageUrl, title || 'spotify-cover');
+        };
+
+        actionsDiv.appendChild(fetchButton);
+        content.appendChild(closeButton);
+        content.appendChild(titleDiv);
+        content.appendChild(img);
+        content.appendChild(actionsDiv);
+        modal.innerHTML = '';
+        modal.appendChild(content);
+        modal.classList.add('active');
+
+        modal.onclick = (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        };
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                modal.classList.remove('active');
+            }
+        });
+    }
+
+    // Rest of the code remains the same...
+    
     function getTitleFromElement(element) {
         const playButton = element.querySelector('button[aria-label^="Play"]');
         if (playButton) {
@@ -106,7 +306,6 @@
             'ab67616d00004851': 'ab67616d000082c1',
             'ab67616d0000b273': 'ab67616d000082c1',
             'ab67616d00001e02': 'ab67616d000082c1',
-            
             'ab67616100005174': 'ab6761610000e5eb',
             'ab6761610000f174': 'ab6761610000e5eb',
             'ab676161000051748': 'ab6761610000e5eb',
@@ -132,11 +331,20 @@
             button.className = 'custom-overlay-button';
             button.setAttribute('tabindex', '0');
 
-            const icon = document.createElement('span');
-            icon.className = 'material-symbols-outlined';
-            icon.textContent = 'add_photo_alternate';
+            const iconNormal = document.createElement('span');
+            iconNormal.className = 'iconify icon-normal';
+            iconNormal.setAttribute('data-icon', 'mdi:image-size-select-large');
+            iconNormal.setAttribute('data-width', '18');
+            iconNormal.setAttribute('data-height', '18');
 
-            button.appendChild(icon);
+            const iconHover = document.createElement('span');
+            iconHover.className = 'iconify icon-hover';
+            iconHover.setAttribute('data-icon', 'mdi:image-size-select-actual');
+            iconHover.setAttribute('data-width', '18');
+            iconHover.setAttribute('data-height', '18');
+
+            button.appendChild(iconNormal);
+            button.appendChild(iconHover);
 
             const handleClick = (e) => {
                 e.preventDefault();
@@ -145,8 +353,7 @@
 
                 const title = getTitleFromElement(cardElement);
                 const fullsizeUrl = getFullsizeUrl(imgElement.src);
-
-                window.open(fullsizeUrl, '_blank');
+                createModal(fullsizeUrl, title);
 
                 return false;
             };
@@ -181,7 +388,6 @@
                         ...Array.from(node.classList?.contains('xBV4XgMq0gC5lQICFWY_') ? [node] : node.querySelectorAll('.xBV4XgMq0gC5lQICFWY_')),
                         ...Array.from(node.classList?.contains('CmkY1Ag0tJDfnFXbGgju') ? [node] : node.querySelectorAll('.CmkY1Ag0tJDfnFXbGgju'))
                     ];
-
                     cards.forEach(addOverlayButton);
                 }
             });
@@ -191,7 +397,6 @@
     function initialize() {
         const existingCards = document.querySelectorAll('.xBV4XgMq0gC5lQICFWY_, .CmkY1Ag0tJDfnFXbGgju');
         existingCards.forEach(addOverlayButton);
-
         observer.observe(document.body, {
             childList: true,
             subtree: true
