@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Track Downloader)
 // @description  Integrate a download button for tracks on Spotify Web to download audio at 320kbps
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.2
+// @version      1.5
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -31,11 +31,12 @@ function isOtherDownloaderInstalled() {
 function getStyles() {
     const otherInstalled = isOtherDownloaderInstalled();
     const marginLeft = otherInstalled ? '90px' : '50px';
-    const buttonMarginRight = otherInstalled ? '60px' : '10px';
+    const buttonMarginRight = otherInstalled ? '10px' : '10px';
+    const buttonSpacing = otherInstalled ? '5px' : '0';
 
     return `
     [role='grid'] {
-        margin-left: ${marginLeft};
+        margin-left: ${marginLeft} !important;
     }
     [data-testid='tracklist-row'] {
         position: relative;
@@ -56,7 +57,24 @@ function getStyles() {
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-left: ${buttonSpacing};
     }
+
+    .N7GZp8IuWPJvCPz_7dOg .btn-320 {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: ${otherInstalled ? 'calc(100% + 50px)' : '100%'};
+        margin-right: ${buttonMarginRight};
+    }
+
+    .N7GZp8IuWPJvCPz_7dOg .btn-320::after {
+        width: 16px;
+        height: 16px;
+    }
+
     .btn-320::after {
         content: '';
         position: absolute;
@@ -78,9 +96,13 @@ function getStyles() {
     [data-testid='tracklist-row'] .btn-320 {
         position: absolute;
         top: 50%;
-        right: 100%;
-        margin-top: -20px;
+        transform: translateY(-50%);
+        right: ${otherInstalled ? 'calc(100% + 50px)' : '100%'};
         margin-right: ${buttonMarginRight};
+    }
+
+    [data-testid='tracklist-row'].N7GZp8IuWPJvCPz_7dOg .btn-320 {
+        right: ${otherInstalled ? 'calc(99% + 50px)' : '99%'};
     }
     `;
 }
