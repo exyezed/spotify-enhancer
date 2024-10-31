@@ -62,4 +62,4 @@ Integrates copy button with options in Spotify Web Player for easy access to tra
 
 #### [Install Script](https://update.greasyfork.org/scripts/514706/Spotify%20Enhancer%20%28Copy%20Track%20Info%2C%20ID%20%20Link%29.user.js)
 
-![image](https://github.com/user-attachments/assets/846b67eb-f456-4c74-bcff-ee7dab5cd245)
+![image](https://github.com/user-attachments/assets/2aaca082-732a-42cf-b07c-122db94041d9)
