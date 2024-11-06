@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Integrates a download button in Spotify Web Player for bulk album cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.3
+// @version      1.4
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -216,19 +216,48 @@
         }
     `);
 
+    function createElementSafe(tag, attributes = {}, children = []) {
+        const element = document.createElement(tag);
+        for (const [key, value] of Object.entries(attributes)) {
+            if (key === 'className') {
+                element.className = value;
+            } else {
+                element.setAttribute(key, value);
+            }
+        }
+        children.forEach(child => {
+            if (typeof child === 'string') {
+                element.appendChild(document.createTextNode(child));
+            } else {
+                element.appendChild(child);
+            }
+        });
+        return element;
+    }
+
+    function createSVGSafe(svgString) {
+        const parser = new DOMParser();
+        const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
+        return svgDoc.documentElement;
+    }
+
     function createProgressOverlay() {
-        const overlay = document.createElement('div');
-        overlay.className = 'download-progress-overlay';
-        overlay.innerHTML = `
-            <div class="progress-container">
-                <div class="progress-title">Downloading Cover Art</div>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
-                <div class="progress-status">Preparing download...</div>
-                <button class="cancel-button">Cancel</button>
-            </div>
-        `;
+        const overlay = createElementSafe('div', { className: 'download-progress-overlay' });
+        const container = createElementSafe('div', { className: 'progress-container' });
+        
+        const title = createElementSafe('div', { className: 'progress-title' }, ['Downloading Cover Art']);
+        const progressBar = createElementSafe('div', { className: 'progress-bar' });
+        const progressFill = createElementSafe('div', { className: 'progress-fill' });
+        const status = createElementSafe('div', { className: 'progress-status' }, ['Preparing download...']);
+        const cancelButton = createElementSafe('button', { className: 'cancel-button' }, ['Cancel']);
+
+        progressBar.appendChild(progressFill);
+        container.appendChild(title);
+        container.appendChild(progressBar);
+        container.appendChild(status);
+        container.appendChild(cancelButton);
+        overlay.appendChild(container);
+
         return overlay;
     }
 
@@ -301,7 +330,10 @@
                 button.classList.add('loading');
                 const iconWrapper = button.querySelector('.IconWrapper');
                 if (iconWrapper) {
-                    iconWrapper.innerHTML = ICONS.spinner;
+                    while (iconWrapper.firstChild) {
+                        iconWrapper.removeChild(iconWrapper.firstChild);
+                    }
+                    iconWrapper.appendChild(createSVGSafe(ICONS.spinner));
                 }
             }
 
@@ -311,9 +343,14 @@
                 button.classList.remove('loading');
                 const iconWrapper = button.querySelector('.IconWrapper');
                 if (iconWrapper) {
-                    iconWrapper.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
-                        <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                    </svg>`;
+                    while (iconWrapper.firstChild) {
+                        iconWrapper.removeChild(iconWrapper.firstChild);
+                    }
+                    iconWrapper.appendChild(createSVGSafe(`
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
+                            <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+                        </svg>
+                    `));
                 }
             }
 
@@ -371,51 +408,67 @@
                 button.classList.remove('loading');
                 const iconWrapper = button.querySelector('.IconWrapper');
                 if (iconWrapper) {
-                    iconWrapper.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
-                        <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                    </svg>`;
+                    while (iconWrapper.firstChild) {
+                        iconWrapper.removeChild(iconWrapper.firstChild);
+                    }
+                    iconWrapper.appendChild(createSVGSafe(`
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
+                            <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+                        </svg>
+                    `));
                 }
             }
         }
     }
 
     function createDownloadButton() {
-        const button = document.createElement('button');
-        button.className = 'Button-sc-1dqy6lx-0 dbhFGF download-button';
-        button.setAttribute('aria-label', 'Download All Cover Art');
-        button.setAttribute('title', 'Download All Cover Art');
-        button.setAttribute('data-encore-id', 'buttonTertiary');
-    
-        button.innerHTML = `
-            <span class="IconWrapper" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
-                    <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                </svg>
-            </span>
-        `;
-    
+        const button = createElementSafe('button', {
+            className: 'Button-sc-1dqy6lx-0 dbhFGF download-button',
+            'aria-label': 'Download All Cover Art',
+            title: 'Download All Cover Art',
+            'data-encore-id': 'buttonTertiary'
+        });
+
+        const iconWrapper = createElementSafe('span', {
+            className: 'IconWrapper',
+            'aria-hidden': 'true'
+        });
+
+        iconWrapper.appendChild(createSVGSafe(`
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
+                <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
+            </svg>
+        `));
+
+        button.appendChild(iconWrapper);
         button.addEventListener('click', downloadCover);
         return button;
     }
 
     function createResolutionToggle() {
-        const button = document.createElement('button');
-        button.className = `resolution-toggle ${CONFIG.useFullSize ? 'active' : ''}`;
-        button.setAttribute('aria-label', 'Toggle High Resolution');
-        button.setAttribute('title', 'High Resolution (2000x2000)');
-        button.setAttribute('data-encore-id', 'buttonTertiary');
+        const button = createElementSafe('button', {
+            className: `resolution-toggle ${CONFIG.useFullSize ? 'active' : ''}`,
+            'aria-label': 'Toggle High Resolution',
+            title: 'High Resolution (2000x2000)',
+            'data-encore-id': 'buttonTertiary'
+        });
 
-        button.innerHTML = `
-            <span class="IconWrapper" aria-hidden="true">
-                ${CONFIG.useFullSize ? ICONS.toggleOn : ICONS.toggleOff}
-            </span>
-        `;
+        const iconWrapper = createElementSafe('span', {
+            className: 'IconWrapper',
+            'aria-hidden': 'true'
+        });
+
+        iconWrapper.appendChild(createSVGSafe(CONFIG.useFullSize ? ICONS.toggleOn : ICONS.toggleOff));
+        button.appendChild(iconWrapper);
 
         button.addEventListener('click', () => {
             CONFIG.useFullSize = !CONFIG.useFullSize;
             GM_setValue('useFullSize', CONFIG.useFullSize);
             button.classList.toggle('active');
-            button.querySelector('.IconWrapper').innerHTML = CONFIG.useFullSize ? ICONS.toggleOn : ICONS.toggleOff;
+            while (iconWrapper.firstChild) {
+                iconWrapper.removeChild(iconWrapper.firstChild);
+            }
+            iconWrapper.appendChild(createSVGSafe(CONFIG.useFullSize ? ICONS.toggleOn : ICONS.toggleOff));
         });
 
         return button;
@@ -528,3 +581,5 @@
         init();
     }
 })();
+
+console.log("Spotify Enhancer (Cover Art Bulk Downloader) is running");
