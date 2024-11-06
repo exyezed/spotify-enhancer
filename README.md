@@ -42,7 +42,7 @@ Integrates an overlay button in Spotify Web Player to view and download full-siz
 
 ![image](https://github.com/user-attachments/assets/706fefb3-bba8-4cf4-8c80-33659f760065)
 
-![image](https://github.com/user-attachments/assets/ec6bef7b-a0d2-4560-a922-902af22d6433)
+![image](https://github.com/user-attachments/assets/1f345d1c-52e7-481d-b3e1-62638bd3687f)
 
 ## 4. Spotify Enhancer (Cover Art Bulk Downloader)
 
