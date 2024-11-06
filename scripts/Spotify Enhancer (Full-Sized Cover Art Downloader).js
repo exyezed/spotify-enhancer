@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Full-Sized Cover Art Downloader)
 // @description  Integrates an overlay button in Spotify Web Player to view and download full-sized (2000px) album cover art.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.4
+// @version      1.5
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -90,7 +90,7 @@
             z-index: 10000;
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.1s ease, visibility 0.1s ease;
         }
 
         .preview-modal.active {
@@ -106,24 +106,22 @@
             flex-direction: column;
             align-items: center;
             transform: scale(0.95);
-            transition: transform 0.3s ease;
+            transition: transform 0.1s ease;
         }
 
         .preview-modal.active .preview-modal-content {
             transform: scale(1);
         }
 
-        .preview-modal-content.loading .preview-modal-close,
         .preview-modal-content.loading .preview-actions {
             opacity: 0;
             visibility: hidden;
         }
         
-        .preview-modal-content .preview-modal-close,
         .preview-modal-content .preview-actions {
             opacity: 1;
             visibility: visible;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: opacity 0.1s ease, visibility 0.1s ease;
         }
 
         .preview-modal img {
@@ -133,27 +131,6 @@
             cursor: pointer;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        }
-
-        .preview-modal-close {
-            position: absolute;
-            top: -40px;
-            right: 0;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.8;
-            transition: all 0.3s ease;
-        }
-
-        .preview-modal-close:hover {
-            opacity: 1;
-            color: #f3727f;
         }
 
         .preview-actions {
@@ -170,7 +147,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
             gap: 6px;
         }
 
@@ -221,14 +198,6 @@
         const titleDiv = document.createElement('div');
         titleDiv.className = 'preview-modal-title';
 
-        const closeButton = document.createElement('button');
-        closeButton.className = 'preview-modal-close';
-        closeButton.innerHTML = '<span class="iconify" data-icon="pajamas:close-xs" data-width="24" data-height="24"></span>';
-        closeButton.onclick = (e) => {
-            e.stopPropagation();
-            modal.classList.remove('active');
-        };
-
         const img = document.createElement('img');
         img.onload = () => {
             content.classList.remove('loading');
@@ -249,18 +218,28 @@
 
         const fetchButton = document.createElement('button');
         fetchButton.className = 'fetch-button';
-        fetchButton.innerHTML = '<span class="iconify" data-icon="mynaui:fat-arrow-down-solid" data-width="18" data-height="18"></span> <span>DOWNLOAD</span>';
+        const downloadIcon = document.createElement('span');
+        downloadIcon.className = 'iconify';
+        downloadIcon.setAttribute('data-icon', 'mynaui:fat-arrow-down-solid');
+        downloadIcon.setAttribute('data-width', '18');
+        downloadIcon.setAttribute('data-height', '18');
+        const downloadText = document.createElement('span');
+        downloadText.textContent = 'DOWNLOAD';
+        fetchButton.appendChild(downloadIcon);
+        fetchButton.appendChild(downloadText);
         fetchButton.onclick = (e) => {
             e.stopPropagation();
             downloadImage(imageUrl, title || 'spotify-cover');
         };
 
         actionsDiv.appendChild(fetchButton);
-        content.appendChild(closeButton);
         content.appendChild(titleDiv);
         content.appendChild(img);
         content.appendChild(actionsDiv);
-        modal.innerHTML = '';
+        
+        while (modal.firstChild) {
+            modal.removeChild(modal.firstChild);
+        }
         modal.appendChild(content);
         modal.classList.add('active');
 
@@ -277,8 +256,7 @@
         });
     }
 
-    // Rest of the code remains the same...
-    
+    // The rest of the script remains unchanged
     function getTitleFromElement(element) {
         const playButton = element.querySelector('button[aria-label^="Play"]');
         if (playButton) {
@@ -409,3 +387,5 @@
         initialize();
     }
 })();
+
+console.log("Spotify Enhancer (Full-Sized Cover Art Downloader) is running");
