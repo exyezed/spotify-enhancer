@@ -29,8 +29,7 @@ Integrates a download button in Spotify Web Player for bulk album cover art down
 
 #### [Install Script](https://update.greasyfork.org/scripts/514421/Spotify%20Enhancer%20%28Cover%20Art%20Bulk%20Downloader%29.user.js)
 
-![image](https://github.com/user-attachments/assets/a1006f4f-f4e1-4f00-b29d-74ef465fc167)
+![image](https://github.com/user-attachments/assets/2b19bc60-0318-45a5-b2a2-9b94144e4f45)
 
-> Enable the toggle if you want to download cover art at full-size resolution (2000px)
+![image](https://github.com/user-attachments/assets/5f13586a-64ac-4607-8e62-29f41952c654)
 
-![image](https://github.com/user-attachments/assets/56855b38-8303-427f-b5a6-28468159c327)
