@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Integrates a download button in Spotify Web Player for bulk album cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.6
+// @version      1.7
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -20,202 +20,25 @@
 (function() {
     'use strict';
 
+    // Constants
     const IMAGE_RESOLUTIONS = {
-        FULL_SIZE: 'ab67616d000082c1',
-        NORMAL: 'ab67616d00001e02'
+        SMALL: 'ab67616d00004851',
+        INITIAL: 'ab67616d00001e02',
+        MEDIUM: 'ab67616d0000b273',
+        FULL: 'ab67616d000082c1'
     };
 
     const CONFIG = {
-        useFullSize: GM_getValue('useFullSize', 0)
+        selectedSize: GM_getValue('selectedSize', 'INITIAL')
     };
 
     const ICONS = {
-        toggleOn: `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"><path d="M280-240q-100 0-170-70T40-480q0-100 70-170t170-70h400q100 0 170 70t70 170q0 100-70 170t-170 70H280Zm0-80h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm400-40q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM480-480Z"/></svg>`,
-        toggleOff: `<svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"><path d="M280-240q-100 0-170-70T40-480q0-100 70-170t170-70h400q100 0 170 70t70 170q0 100-70 170t-170 70H280Zm0-80h400q66 0 113-47t47-113q0-66-47-113t-113-47H280q-66 0-113 47t-47 113q0 66 47 113t113 47Zm0-40q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm200-120Z"/></svg>`,
-        spinner: `<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z"/><rect width="2" height="7" x="11" y="6" fill="currentColor" rx="1"><animateTransform attributeName="transform" dur="9s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></rect><rect width="2" height="9" x="11" y="11" fill="currentColor" rx="1"><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></rect></svg>`
+        coverSize: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.73682,3.751,19.31689,1.33105a.99964.99964,0,0,0-1.41406,0L13.32275,5.91113a1.00013,1.00013,0,0,0-.293.707V9.03809a1.00005,1.00005,0,0,0,1,1H16.4502a1.00014,1.00014,0,0,0,.707-.293L21.73682,5.165A.99964.99964,0,0,0,21.73682,3.751ZM16.03613,8.03809H15.02979V7.03223l3.58007-3.58008L19.61572,4.458ZM19,11a1,1,0,0,0-1,1v2.3916l-1.48047-1.48047a2.78039,2.78039,0,0,0-3.92822,0l-.698.698L9.40723,11.123a2.777,2.777,0,0,0-3.92432,0L4,12.606V7A1.0013,1.0013,0,0,1,5,6h6a1,1,0,0,0,0-2H5A3.00328,3.00328,0,0,0,2,7V19a3.00328,3.00328,0,0,0,3,3H17a3.00328,3.00328,0,0,0,3-3V12A1,1,0,0,0,19,11ZM5,20a1.0013,1.0013,0,0,1-1-1V15.43408l2.897-2.897a.79926.79926,0,0,1,1.09619,0l3.168,3.16711c.00849.00916.0116.02179.02045.03064L15.44714,20Zm13-1a.97137.97137,0,0,1-.17877.53705l-4.51386-4.51386.698-.698a.77979.77979,0,0,1,1.1001,0L18,17.21973Z"></path></svg>`,
+        spinner: `<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 24 24"><path fill="currentColor" d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z"/><rect width="2" height="7" x="11" y="6" fill="currentColor" rx="1"><animateTransform attributeName="transform" dur="9s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></rect><rect width="2" height="9" x="11" y="11" fill="currentColor" rx="1"><animateTransform attributeName="transform" dur="0.75s" repeatCount="indefinite" type="rotate" values="0 12 12;360 12 12"/></rect></svg>`,
+        download: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M22.71,6.29a1,1,0,0,0-1.42,0L20,7.59V2a1,1,0,0,0-2,0V7.59l-1.29-1.3a1,1,0,0,0-1.42,1.42l3,3a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l3-3A1,1,0,0,0,22.71,6.29ZM19,13a1,1,0,0,0-1,1v.38L16.52,12.9a2.79,2.79,0,0,0-3.93,0l-.7.7L9.41,11.12a2.85,2.85,0,0,0-3.93,0L4,12.6V7A1,1,0,0,1,5,6h8a1,1,0,0,0,0-2H5A3,3,0,0,0,2,7V19a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V14A1,1,0,0,0,19,13ZM5,20a1,1,0,0,1-1-1V15.43l2.9-2.9a.79.79,0,0,1,1.09,0l3.17,3.17,0,0L15.46,20Zm13-1a.89.89,0,0,1-.18.53L13.31,15l.7-.7a.77.77,0,0,1,1.1,0L18,17.21Z"></path></g></svg>`
     };
 
-    function getModifiedImageUrl(originalUrl) {
-        const targetResolution = CONFIG.useFullSize ? IMAGE_RESOLUTIONS.FULL_SIZE : IMAGE_RESOLUTIONS.NORMAL;
-        return originalUrl.replace(/ab67616d00001e02|ab67616d000082c1/, targetResolution);
-    }
-
-    GM_addStyle(`
-        :root {
-            --spotify-font-stack: SpotifyMixUI,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,var(--fallback-fonts,sans-serif);
-            --spotify-title-font-stack: SpotifyMixUITitle,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,var(--fallback-fonts,sans-serif);
-        }
-
-        .download-button {
-            background: transparent;
-            border: none;
-            color: #b3b3b3;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 52px;
-            min-height: 52px;
-            margin: 0;
-            padding: 0;
-            font-family: var(--spotify-font-stack);
-            transition: color 0.2s ease;
-        }
-        
-        .download-button.loading {
-            pointer-events: none;
-            opacity: 1;
-        }
-
-        .download-button:hover {
-            color: #fff;
-        }
-
-        .download-button .IconWrapper {
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .download-button svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .download-button svg path {
-            fill: currentColor;
-        }
-
-        .resolution-toggle {
-            background: transparent;
-            border: none;
-            color: #b3b3b3;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 52px;
-            min-height: 52px;
-            margin: 0 0 0 -18px;
-            padding: 0;
-            font-family: var(--spotify-font-stack);
-            transition: color 0.2s ease;
-        }
-
-        .resolution-toggle:hover {
-            color: #fff;
-        }
-
-        .resolution-toggle .IconWrapper {
-            width: 52px;
-            height: 52px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .resolution-toggle svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .resolution-toggle svg path {
-            fill: currentColor;
-        }
-
-        .resolution-toggle.active {
-            color: #1db954;
-        }
-
-        .resolution-toggle.active:hover {
-            color: #1ed760;
-        }
-
-        .download-progress-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
-            font-family: var(--spotify-font-stack);
-        }
-
-        .progress-container {
-            width: 300px;
-            background: #282828;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .progress-title {
-            text-align: center;
-            margin-bottom: 15px;
-            font-size: 16px;
-            font-family: var(--spotify-title-font-stack);
-            font-weight: 700;
-            letter-spacing: -0.04em;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #404040;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: #1db954;
-            width: 0%;
-            transition: width 0.2s ease;
-        }
-
-        .progress-status {
-            text-align: center;
-            font-size: 14px;
-            color: #b3b3b3;
-            font-family: var(--spotify-font-stack);
-            margin-bottom: 15px;
-        }
-
-        .cancel-button {
-            background: transparent;
-            border: 1px solid #b3b3b3;
-            color: #b3b3b3;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-family: var(--spotify-font-stack);
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-            width: fit-content;
-            margin: 0 auto;
-            display: block;
-        }
-
-        .cancel-button:hover {
-            border-color: white;
-            color: white;
-            transform: scale(1.04);
-        }
-    `);
-
+    // Utility Functions
     function createElementSafe(tag, attributes = {}, children = []) {
         const element = document.createElement(tag);
         for (const [key, value] of Object.entries(attributes)) {
@@ -239,6 +62,100 @@
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgString, 'image/svg+xml');
         return svgDoc.documentElement;
+    }
+
+    function getModifiedImageUrl(originalUrl) {
+        return originalUrl.replace(/ab67616d00001e02|ab67616d000082c1|ab67616d00004851|ab67616d0000b273/, IMAGE_RESOLUTIONS[CONFIG.selectedSize]);
+    }
+
+    function sanitizeFilename(filename) {
+        return filename.replace(/[/\\?%*:|"<>]/g, '-');
+    }
+
+    // UI Components
+    function createCoverSizeButton() {
+        const button = createElementSafe('button', {
+            className: 'Button-sc-1dqy6lx-0 dbhFGF cover-size-button',
+            'aria-label': 'Cover Size Options',
+            title: 'Cover Size Options',
+            'data-encore-id': 'buttonTertiary'
+        });
+    
+        const iconWrapper = createElementSafe('span', {
+            className: 'IconWrapper',
+            'aria-hidden': 'true'
+        });
+    
+        const backdrop = createElementSafe('div', {
+            className: 'size-dropdown-backdrop'
+        });
+        document.body.appendChild(backdrop);
+    
+        const dropdown = createElementSafe('div', {
+            className: 'size-dropdown'
+        });
+
+        document.body.appendChild(dropdown);
+    
+        const sizeOptions = [
+            { id: 'SMALL', label: '64px', description: 'Small' },
+            { id: 'INITIAL', label: '300px', description: 'Initial' },
+            { id: 'MEDIUM', label: '640px', description: 'Medium' },
+            { id: 'FULL', label: '2000px', description: 'Full' }
+        ];
+    
+        sizeOptions.forEach(option => {
+            const sizeOption = createElementSafe('div', {
+                className: `size-option ${CONFIG.selectedSize === option.id ? 'selected' : ''}`,
+                'data-size': option.id
+            }, [
+                option.description,
+                createElementSafe('span', { className: 'size-label' }, [option.label])
+            ]);
+    
+            sizeOption.addEventListener('click', (e) => {
+                e.stopPropagation();
+                CONFIG.selectedSize = option.id;
+                GM_setValue('selectedSize', option.id);
+                
+                dropdown.querySelectorAll('.size-option').forEach(opt => {
+                    opt.classList.toggle('selected', opt.dataset.size === option.id);
+                });
+                
+                hideDropdown();
+            });
+    
+            dropdown.appendChild(sizeOption);
+        });
+    
+        iconWrapper.appendChild(createSVGSafe(ICONS.coverSize));
+        button.appendChild(iconWrapper);
+    
+        function showDropdown() {
+            const buttonRect = button.getBoundingClientRect();
+            dropdown.style.top = `${buttonRect.bottom + 10}px`;
+            dropdown.style.left = `${buttonRect.left}px`;
+            dropdown.classList.add('active');
+            backdrop.classList.add('active');
+          }
+    
+        function hideDropdown() {
+            dropdown.classList.remove('active');
+            backdrop.classList.remove('active');
+        }
+    
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (dropdown.classList.contains('active')) {
+                hideDropdown();
+            } else {
+                showDropdown();
+            }
+        });
+    
+        backdrop.addEventListener('click', hideDropdown);
+    
+        return button;
     }
 
     function createProgressOverlay() {
@@ -270,6 +187,27 @@
         progressStatus.textContent = status || `Downloading ${current} of ${total} cover arts`;
     }
 
+    function createDownloadButton() {
+        const button = createElementSafe('button', {
+            className: 'Button-sc-1dqy6lx-0 dbhFGF download-button',
+            'aria-label': 'Download All Cover Art',
+            title: 'Download All Cover Art',
+            'data-encore-id': 'buttonTertiary'
+        });
+
+        const iconWrapper = createElementSafe('span', {
+            className: 'IconWrapper',
+            'aria-hidden': 'true'
+        });
+
+        iconWrapper.appendChild(createSVGSafe(ICONS.download));
+
+        button.appendChild(iconWrapper);
+        button.addEventListener('click', downloadCover);
+        return button;
+    }
+
+    // Data Fetching
     function getPlaylistId() {
         const match = window.location.pathname.match(/\/playlist\/([a-zA-Z0-9]+)/);
         return match ? match[1] : null;
@@ -308,10 +246,7 @@
         });
     }
 
-    function sanitizeFilename(filename) {
-        return filename.replace(/[/\\?%*:|"<>]/g, '-');
-    }
-
+    // Main Functionality
     let abortDownload = false;
 
     async function downloadCover() {
@@ -327,6 +262,7 @@
 
             const button = document.querySelector('.download-button');
             if (button) {
+                button.classList.add('loading');
                 button.classList.add('loading');
                 const iconWrapper = button.querySelector('.IconWrapper');
                 if (iconWrapper) {
@@ -346,11 +282,7 @@
                     while (iconWrapper.firstChild) {
                         iconWrapper.removeChild(iconWrapper.firstChild);
                     }
-                    iconWrapper.appendChild(createSVGSafe(`
-                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
-                            <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                        </svg>
-                    `));
+                    iconWrapper.appendChild(createSVGSafe(ICONS.download));
                 }
             }
 
@@ -387,7 +319,16 @@
             const zipUrl = URL.createObjectURL(zipBlob);
             const downloadLink = document.createElement('a');
             downloadLink.href = zipUrl;
-            downloadLink.download = sanitizeFilename(`${coverData.playlist_info.title}.zip`);
+            
+            const sizeLabels = {
+                'SMALL': '64px',
+                'INITIAL': '300px',
+                'MEDIUM': '640px',
+                'FULL': '2000px'
+            };
+            const resolutionSuffix = sizeLabels[CONFIG.selectedSize];
+            downloadLink.download = sanitizeFilename(`${coverData.playlist_info.title} (${resolutionSuffix}).zip`);
+            
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
@@ -411,69 +352,13 @@
                     while (iconWrapper.firstChild) {
                         iconWrapper.removeChild(iconWrapper.firstChild);
                     }
-                    iconWrapper.appendChild(createSVGSafe(`
-                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
-                            <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-                        </svg>
-                    `));
+                    iconWrapper.appendChild(createSVGSafe(ICONS.download));
                 }
             }
         }
     }
 
-    function createDownloadButton() {
-        const button = createElementSafe('button', {
-            className: 'Button-sc-1dqy6lx-0 dbhFGF download-button',
-            'aria-label': 'Download All Cover Art',
-            title: 'Download All Cover Art',
-            'data-encore-id': 'buttonTertiary'
-        });
-
-        const iconWrapper = createElementSafe('span', {
-            className: 'IconWrapper',
-            'aria-hidden': 'true'
-        });
-
-        iconWrapper.appendChild(createSVGSafe(`
-            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px">
-                <path d="M360-400h400L622-580l-92 120-62-80-108 140Zm-40 160q-33 0-56.5-23.5T240-320v-480q0-33 23.5-56.5T320-880h480q33 0 56.5 23.5T880-800v480q0-33-23.5 56.5T800-240H320Zm0-80h480v-480H320v480ZM160-80q-33 0-56.5-23.5T80-160v-560h80v560h560v80H160Zm160-720v480-480Z"/>
-            </svg>
-        `));
-
-        button.appendChild(iconWrapper);
-        button.addEventListener('click', downloadCover);
-        return button;
-    }
-
-    function createResolutionToggle() {
-        const button = createElementSafe('button', {
-            className: `resolution-toggle ${CONFIG.useFullSize ? 'active' : ''}`,
-            'aria-label': 'Toggle High Resolution',
-            title: 'High Resolution (2000x2000)',
-            'data-encore-id': 'buttonTertiary'
-        });
-
-        const iconWrapper = createElementSafe('span', {
-            className: 'IconWrapper',
-            'aria-hidden': 'true'
-        });
-
-        iconWrapper.appendChild(createSVGSafe(CONFIG.useFullSize ? ICONS.toggleOn : ICONS.toggleOff));
-        button.appendChild(iconWrapper);
-
-        button.addEventListener('click', () => {
-            CONFIG.useFullSize = !CONFIG.useFullSize;
-            GM_setValue('useFullSize', CONFIG.useFullSize);
-            button.classList.toggle('active');
-            while (iconWrapper.firstChild) {
-                iconWrapper.removeChild(iconWrapper.firstChild);
-            }
-            iconWrapper.appendChild(createSVGSafe(CONFIG.useFullSize ? ICONS.toggleOn : ICONS.toggleOff));
-        });
-
-        return button;
-    }
-
+    // DOM Manipulation
     function waitForElement(selector, timeout = 5000) {
         return new Promise((resolve, reject) => {
             if (document.querySelector(selector)) {
@@ -515,12 +400,12 @@
                 }
             }
 
-            if (!actionBar.querySelector('.resolution-toggle')) {
-                const resolutionToggle = createResolutionToggle();
-                if (resolutionToggle) {
+            if (!actionBar.querySelector('.cover-size-button')) {
+                const coverSizeButton = createCoverSizeButton();
+                if (coverSizeButton) {
                     const downloadButton = actionBar.querySelector('.download-button');
                     if (downloadButton) {
-                        downloadButton.parentNode.insertBefore(resolutionToggle, downloadButton.nextSibling);
+                        downloadButton.parentNode.insertBefore(coverSizeButton, downloadButton.nextSibling);
                     }
                 }
             }
@@ -540,6 +425,7 @@
         addButtons();
     }
 
+    // Initialization
     function init() {
         handleRouteChange();
 
@@ -580,6 +466,295 @@
     } else {
         init();
     }
+
+    // Styles
+    GM_addStyle(`
+        :root {
+            --spotify-font-stack: SpotifyMixUI,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,var(--fallback-fonts,sans-serif);
+            --spotify-title-font-stack: SpotifyMixUITitle,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,var(--fallback-fonts,sans-serif);
+        }
+    
+        .download-button {
+            background: transparent;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 52px;
+            min-height: 52px;
+            margin: 0;
+            padding: 0;
+            font-family: var(--spotify-font-stack);
+            transition: color 0.2s ease;
+        }
+        
+        .download-button.loading {
+            pointer-events: none;
+            opacity: 1;
+        }
+    
+        .download-button:hover {
+            color: #fff;
+        }
+    
+        .download-button .IconWrapper {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        .download-button svg {
+            width: 32px;
+            height: 32px;
+        }
+    
+        .download-button svg path {
+            fill: currentColor;
+        }
+    
+        .resolution-toggle {
+            background: transparent;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 52px;
+            min-height: 52px;
+            margin: 0 0 0 -18px;
+            padding: 0;
+            font-family: var(--spotify-font-stack);
+            transition: color 0.2s ease;
+        }
+    
+        .resolution-toggle:hover {
+            color: #fff;
+        }
+    
+        .resolution-toggle .IconWrapper {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        .resolution-toggle svg {
+            width: 32px;
+            height: 32px;
+        }
+    
+        .resolution-toggle svg path {
+            fill: currentColor;
+        }
+    
+        .resolution-toggle.active {
+            color: #1db954;
+        }
+    
+        .resolution-toggle.active:hover {
+            color: #1ed760;
+        }
+    
+        .download-progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-family: var(--spotify-font-stack);
+        }
+    
+        .progress-container {
+            width: 300px;
+            background: #282828;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+    
+        .progress-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-family: var(--spotify-title-font-stack);
+            font-weight: 700;
+            letter-spacing: -0.04em;
+        }
+    
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #404040;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+    
+        .progress-fill {
+            height: 100%;
+            background: #1db954;
+            width: 0%;
+            transition: width 0.2s ease;
+        }
+    
+        .progress-status {
+            text-align: center;
+            font-size: 14px;
+            color: #b3b3b3;
+            font-family: var(--spotify-font-stack);
+            margin-bottom: 15px;
+        }
+    
+        .cancel-button {
+            background: transparent;
+            border: 1px solid #b3b3b3;
+            color: #b3b3b3;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: var(--spotify-font-stack);
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            width: fit-content;
+            margin: 0 auto;
+            display: block;
+        }
+    
+        .cancel-button:hover {
+            border-color: white;
+            color: white;
+            transform: scale(1.04);
+        }
+    
+        .cover-size-button {
+            background: transparent;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 52px;
+            min-height: 52px;
+            margin: 0 0 0 -18px;
+            padding: 0;
+            font-family: var(--spotify-font-stack);
+            transition: color 0.2s ease;
+            position: relative;
+        }
+    
+        .cover-size-button:hover {
+            color: #fff;
+        }
+    
+        .cover-size-button .IconWrapper {
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    
+        .cover-size-button svg {
+            width: 32px;
+            height: 32px;
+        }
+    
+        .cover-size-button svg path {
+            fill: currentColor;
+        }
+    
+        .size-dropdown {
+            position: fixed;
+            background: #282828;
+            border-radius: 4px;
+            padding: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 9999;
+            min-width: 160px;
+            animation: dropdownFade 0.2s ease;
+        }
+    
+        @keyframes dropdownFade {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    
+        .size-dropdown.active {
+            display: block;
+        }
+    
+        .size-dropdown-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 9998;
+            display: none;
+        }
+    
+        .size-dropdown-backdrop.active {
+            display: block;
+        }
+    
+        .size-option {
+            padding: 12px 16px;
+            color: #b3b3b3;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+    
+        .size-option:hover {
+            background: #333;
+            color: #fff;
+        }
+    
+        .size-option.selected {
+            color: #1db954;
+            background: #333;
+        }
+    
+        .size-option.selected:hover {
+            color: #1ed760;
+        }
+    
+        .size-label {
+            margin-left: 12px;
+            font-size: 12px;
+            color: #686868;
+            opacity: 0.8;
+        }
+    `);
 })();
 
 console.log("Spotify Enhancer (Cover Art Bulk Downloader) is running");
