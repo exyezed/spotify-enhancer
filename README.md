@@ -22,3 +22,15 @@ Integrates copy button with options in Spotify Web Player for easy access to tra
 #### [Install Script](https://update.greasyfork.org/scripts/514706/Spotify%20Enhancer%20%28Copy%20Track%20Info%2C%20ID%20%20Link%29.user.js)
 
 ![image](https://github.com/user-attachments/assets/2aaca082-732a-42cf-b07c-122db94041d9)
+
+## 3. Spotify Enhancer (Cover Art Bulk Downloader)
+
+Integrates a download button in Spotify Web Player for bulk album cover art downloads.
+
+#### [Install Script](https://update.greasyfork.org/scripts/514421/Spotify%20Enhancer%20%28Cover%20Art%20Bulk%20Downloader%29.user.js)
+
+![image](https://github.com/user-attachments/assets/a1006f4f-f4e1-4f00-b29d-74ef465fc167)
+
+> Enable the toggle if you want to download cover art at full-size resolution (2000px)
+
+![image](https://github.com/user-attachments/assets/56855b38-8303-427f-b5a6-28468159c327)
