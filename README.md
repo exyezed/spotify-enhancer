@@ -25,13 +25,13 @@ Integrates copy button with options in Spotify Web Player for easy access to tra
 
 ## 3. Spotify Enhancer (Cover Art Bulk Downloader)
 
-Integrates a download button in Spotify Web Player for bulk album cover art downloads.
+Integrates a download button into the Spotify Web Player for bulk cover art downloads.
 
 #### [Install Script](https://update.greasyfork.org/scripts/514421/Spotify%20Enhancer%20%28Cover%20Art%20Bulk%20Downloader%29.user.js)
 
 ![image](https://github.com/user-attachments/assets/2b19bc60-0318-45a5-b2a2-9b94144e4f45)
 
-![image](https://github.com/user-attachments/assets/5f13586a-64ac-4607-8e62-29f41952c654)
+![image](https://github.com/user-attachments/assets/f01633f9-72b9-41ea-85bd-0368493087c2)
 
 ## 4. Spotify Enhancer (Spotify to YouTube)
 
