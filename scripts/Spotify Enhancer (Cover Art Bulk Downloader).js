@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
-// @description  Integrates a download button in Spotify Web Player for bulk album cover art downloads.
+// @description  Integrates a download button into the Spotify Web Player for bulk cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.7
+// @version      1.8
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -23,13 +23,13 @@
     // Constants
     const IMAGE_RESOLUTIONS = {
         SMALL: 'ab67616d00004851',
-        INITIAL: 'ab67616d00001e02',
-        MEDIUM: 'ab67616d0000b273',
-        FULL: 'ab67616d000082c1'
+        MEDIUM: 'ab67616d00001e02',
+        LARGE: 'ab67616d0000b273',
+        ORIGINAL: 'ab67616d000082c1'
     };
 
     const CONFIG = {
-        selectedSize: GM_getValue('selectedSize', 'INITIAL')
+        selectedSize: GM_getValue('selectedSize', 'MEDIUM')
     };
 
     const ICONS = {
@@ -99,9 +99,9 @@
     
         const sizeOptions = [
             { id: 'SMALL', label: '64px', description: 'Small' },
-            { id: 'INITIAL', label: '300px', description: 'Initial' },
-            { id: 'MEDIUM', label: '640px', description: 'Medium' },
-            { id: 'FULL', label: '2000px', description: 'Full' }
+            { id: 'MEDIUM', label: '300px', description: 'Medium' },
+            { id: 'LARGE', label: '640px', description: 'Large' },
+            { id: 'ORIGINAL', label: '2000px', description: 'Original' }
         ];
     
         sizeOptions.forEach(option => {
@@ -321,13 +321,13 @@
             downloadLink.href = zipUrl;
             
             const sizeLabels = {
-                'SMALL': '64px',
-                'INITIAL': '300px',
-                'MEDIUM': '640px',
-                'FULL': '2000px'
+                'SMALL': '(Small)',
+                'MEDIUM': '(Medium)',
+                'LARGE': '(Large)',
+                'ORIGINAL': '(Original)'
             };
             const resolutionSuffix = sizeLabels[CONFIG.selectedSize];
-            downloadLink.download = sanitizeFilename(`${coverData.playlist_info.title} (${resolutionSuffix}).zip`);
+            downloadLink.download = sanitizeFilename(`${coverData.playlist_info.title} ${resolutionSuffix}.zip`);
             
             document.body.appendChild(downloadLink);
             downloadLink.click();
