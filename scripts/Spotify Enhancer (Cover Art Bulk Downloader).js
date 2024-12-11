@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Integrates a download button into the Spotify Web Player for bulk cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.8
+// @version      1.9
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -13,7 +13,7 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
-// @connect      spotifyapis.vercel.app
+// @connect      spotapis.vercel.app
 // @connect      i.scdn.co
 // ==/UserScript==
 
@@ -217,7 +217,7 @@
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
                 method: 'GET',
-                url: `https://spotifyapis.vercel.app/playlist/${playlistId}`,
+                url: `https://spotapis.vercel.app/playlist/${playlistId}`,
                 onload: function(response) {
                     try {
                         const data = JSON.parse(response.responseText);
@@ -263,7 +263,6 @@
             const button = document.querySelector('.download-button');
             if (button) {
                 button.classList.add('loading');
-                button.classList.add('loading');
                 const iconWrapper = button.querySelector('.IconWrapper');
                 if (iconWrapper) {
                     while (iconWrapper.firstChild) {
@@ -306,7 +305,7 @@
                 try {
                     updateProgress(overlay, i + 1, total);
                     const imageBlob = await fetchImageAsBlob(track.cover);
-                    const filename = sanitizeFilename(`${track.title} - ${track.artists}.jpeg`);
+                    const filename = sanitizeFilename(`${track.title} - ${track.artist}.jpeg`);
                     zip.file(filename, imageBlob);
                 } catch (error) {
                     console.error(`Failed to download cover art for ${track.title}:`, error);
