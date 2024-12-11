@@ -9,6 +9,8 @@
 
 Integrates an overlay button in Spotify Web Player to view and download full-sized `2000px` album cover art.
 
+![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/514396-spotify-enhancer-full-sized-cover-art-downloader)
+
 #### [Install Script](https://update.greasyfork.org/scripts/514396/Spotify%20Enhancer%20%28Full-Sized%20Cover%20Art%20Downloader%29.user.js)
 
 ![image](https://github.com/user-attachments/assets/706fefb3-bba8-4cf4-8c80-33659f760065)
@@ -19,6 +21,8 @@ Integrates an overlay button in Spotify Web Player to view and download full-siz
 
 Integrates copy button with options in Spotify Web Player for easy access to track information, IDs, and links.
 
+![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/514706-spotify-enhancer-copy-track-info-id-link)
+
 #### [Install Script](https://update.greasyfork.org/scripts/514706/Spotify%20Enhancer%20%28Copy%20Track%20Info%2C%20ID%20%20Link%29.user.js)
 
 ![image](https://github.com/user-attachments/assets/a432bc3f-27c8-47d6-9b5a-c7a8969457d4)
@@ -26,6 +30,8 @@ Integrates copy button with options in Spotify Web Player for easy access to tra
 ## 3. Spotify Enhancer (Cover Art Bulk Downloader)
 
 Integrates a download button into the Spotify Web Player for bulk cover art downloads.
+
+![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/514421-spotify-enhancer-cover-art-bulk-downloader)
 
 #### [Install Script](https://update.greasyfork.org/scripts/514421/Spotify%20Enhancer%20%28Cover%20Art%20Bulk%20Downloader%29.user.js)
 
@@ -36,6 +42,8 @@ Integrates a download button into the Spotify Web Player for bulk cover art down
 ## 4. Spotify Enhancer (Spotify to YouTube)
 
 Easily find and open YouTube videos for any Spotify track with a single click.
+
+![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/519979-spotify-enhancer-spotify-to-youtube)
 
 #### [Install Script](https://update.greasyfork.org/scripts/519979/Spotify%20Enhancer%20%28Spotify%20to%20YouTube%29.user.js)
 
