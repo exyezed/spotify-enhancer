@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Spotify to YouTube)
 // @description  Easily find and open YouTube videos for any Spotify track with a single click.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.0
+// @version      1.1
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -115,7 +115,7 @@
             return;
         }
         
-        fetch(`https://spotifyapis.vercel.app/track/${trackId}`)
+        fetch(`https://spotapis.vercel.app/track/${trackId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.youtube_url) {
