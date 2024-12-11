@@ -47,4 +47,4 @@ Easily find and open YouTube videos for any Spotify track with a single click.
 
 #### [Install Script](https://update.greasyfork.org/scripts/519979/Spotify%20Enhancer%20%28Spotify%20to%20YouTube%29.user.js)
 
-![image](https://github.com/user-attachments/assets/093bde54-b982-42fe-8a1f-d37d08fe9f3c)
+![image](https://github.com/user-attachments/assets/e9ffcb64-d9d6-41dd-a9a7-18a4c383b71e)
