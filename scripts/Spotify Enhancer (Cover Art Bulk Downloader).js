@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Integrates a download button into the Spotify Web Player for bulk cover art downloads.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.9
+// @version      2.0
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -20,7 +20,6 @@
 (function() {
     'use strict';
 
-    // Constants
     const IMAGE_RESOLUTIONS = {
         SMALL: 'ab67616d00004851',
         MEDIUM: 'ab67616d00001e02',
@@ -38,7 +37,6 @@
         download: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke-width="0.00024000000000000003"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M22.71,6.29a1,1,0,0,0-1.42,0L20,7.59V2a1,1,0,0,0-2,0V7.59l-1.29-1.3a1,1,0,0,0-1.42,1.42l3,3a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l3-3A1,1,0,0,0,22.71,6.29ZM19,13a1,1,0,0,0-1,1v.38L16.52,12.9a2.79,2.79,0,0,0-3.93,0l-.7.7L9.41,11.12a2.85,2.85,0,0,0-3.93,0L4,12.6V7A1,1,0,0,1,5,6h8a1,1,0,0,0,0-2H5A3,3,0,0,0,2,7V19a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V14A1,1,0,0,0,19,13ZM5,20a1,1,0,0,1-1-1V15.43l2.9-2.9a.79.79,0,0,1,1.09,0l3.17,3.17,0,0L15.46,20Zm13-1a.89.89,0,0,1-.18.53L13.31,15l.7-.7a.77.77,0,0,1,1.1,0L18,17.21Z"></path></g></svg>`
     };
 
-    // Utility Functions
     function createElementSafe(tag, attributes = {}, children = []) {
         const element = document.createElement(tag);
         for (const [key, value] of Object.entries(attributes)) {
@@ -72,7 +70,6 @@
         return filename.replace(/[/\\?%*:|"<>]/g, '-');
     }
 
-    // UI Components
     function createCoverSizeButton() {
         const button = createElementSafe('button', {
             className: 'Button-sc-1dqy6lx-0 dbhFGF cover-size-button',
@@ -207,7 +204,6 @@
         return button;
     }
 
-    // Data Fetching
     function getPlaylistId() {
         const match = window.location.pathname.match(/\/playlist\/([a-zA-Z0-9]+)/);
         return match ? match[1] : null;
@@ -246,7 +242,6 @@
         });
     }
 
-    // Main Functionality
     let abortDownload = false;
 
     async function downloadCover() {
@@ -357,7 +352,6 @@
         }
     }
 
-    // DOM Manipulation
     function waitForElement(selector, timeout = 5000) {
         return new Promise((resolve, reject) => {
             if (document.querySelector(selector)) {
@@ -424,7 +418,6 @@
         addButtons();
     }
 
-    // Initialization
     function init() {
         handleRouteChange();
 
@@ -466,7 +459,6 @@
         init();
     }
 
-    // Styles
     GM_addStyle(`
         :root {
             --spotify-font-stack: SpotifyMixUI,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,var(--fallback-fonts,sans-serif);
@@ -754,6 +746,5 @@
             opacity: 0.8;
         }
     `);
+    console.log('Spotify Enhancer (Cover Art Bulk Downloader) is running');
 })();
-
-console.log("Spotify Enhancer (Cover Art Bulk Downloader) is running");
