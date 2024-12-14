@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Full-Sized Cover Art Downloader)
 // @description  Integrates an overlay button in Spotify Web Player to view and download full-sized (2000px) album cover art.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.5
+// @version      1.6
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -201,7 +201,6 @@
         const img = document.createElement('img');
         img.onload = () => {
             content.classList.remove('loading');
-            // Update title with image dimensions after load
             titleDiv.textContent = `${title} (${img.naturalWidth} x ${img.naturalHeight})`;
             if (window.Iconify) {
                 window.Iconify.scan(content);
@@ -256,7 +255,6 @@
         });
     }
 
-    // The rest of the script remains unchanged
     function getTitleFromElement(element) {
         const playButton = element.querySelector('button[aria-label^="Play"]');
         if (playButton) {
@@ -386,6 +384,5 @@
     } else {
         initialize();
     }
+    console.log('Spotify Enhancer (Full-Sized Cover Art Downloader) is running');
 })();
-
-console.log("Spotify Enhancer (Full-Sized Cover Art Downloader) is running");
