@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Spotify to YouTube)
 // @description  Easily find and open YouTube videos for any Spotify track with a single click.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.1
+// @version      1.2
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -177,4 +177,5 @@
     });
     
     insertSVGIconNextToH1();
+    console.log('Spotify Enhancer (Spotify to YouTube) is running');
 })();
