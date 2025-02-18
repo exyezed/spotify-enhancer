@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Copy Track Info, ID & Link)
 // @description  Integrates copy button with options in Spotify Web Player for easy access to track information, IDs, and links.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.2
+// @version      1.3
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -186,25 +186,66 @@
     function createOptionsButton() {
         const actionBar = document.querySelector('.eSg4ntPU2KQLfpLGXAww[data-testid="action-bar-row"]');
         if (!actionBar || actionBar.querySelector('.spotify-copy-options')) return;
-
+    
         const optionsBtn = document.createElement('button');
-        optionsBtn.className = 'Button-sc-1dqy6lx-0 dbhFGF spotify-copy-options';
-        optionsBtn.appendChild(copyIcon.cloneNode(true));
+        optionsBtn.className = 'spotify-copy-options';
+        optionsBtn.style.cssText = `
+            background: transparent;
+            border: none;
+            color: #b3b3b3;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: color 0.2s ease;
+        `;
+    
+        optionsBtn.addEventListener('mouseover', () => {
+            optionsBtn.style.color = '#ffffff';
+        });
+    
+        optionsBtn.addEventListener('mouseout', () => {
+            optionsBtn.style.color = '#b3b3b3';
+        });
+    
+        const icon = copyIcon.cloneNode(true);
+        icon.style.cssText = `
+            margin-right: 8px;
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            vertical-align: middle;
+        `;
+        
         const optionsText = document.createElement('span');
         optionsText.textContent = 'OPTIONS';
-        optionsText.style.marginLeft = '8px';
+        optionsText.style.cssText = `
+            font-family: CircularSp, CircularSp-Arab, CircularSp-Hebr, CircularSp-Cyrl, CircularSp-Grek, CircularSp-Deva, var(--font-family,CircularSp,CircularSp-Arab,CircularSp-Hebr,CircularSp-Cyrl,CircularSp-Grek,CircularSp-Deva,sans-serif);
+            letter-spacing: 1px;
+            font-size: 14px;
+        `;
+    
+        optionsBtn.appendChild(icon);
         optionsBtn.appendChild(optionsText);
-
+    
         const menu = document.createElement('div');
         menu.className = 'spotify-copy-menu';
-        menu.style.display = 'none';
-        menu.style.position = 'absolute';
-        menu.style.backgroundColor = '#282828';
-        menu.style.padding = '8px';
-        menu.style.borderRadius = '4px';
-        menu.style.zIndex = '1000';
-        menu.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
-
+        menu.style.cssText = `
+            display: none;
+            position: absolute;
+            background-color: #282828;
+            padding: 4px;
+            border-radius: 4px;
+            z-index: 1000;
+            box-shadow: 0 16px 24px rgba(0,0,0,.3),0 6px 8px rgba(0,0,0,.2);
+            min-width: 196px;
+            max-width: 350px;
+            border: 1px solid rgba(255,255,255,0.1);
+        `;
+    
         const toggleOption = createMenuItem(settings.isEnabled ? 'Enabled' : 'Disabled',
                                          settings.isEnabled ? enabledIcon : disabledIcon,
                                          'toggle');
@@ -213,14 +254,14 @@
         const artistFirstOption = createMenuItem('Track Info (Artist - Title)', artistIcon, 'artistFirst');
         const trackIdOption = createMenuItem('Track ID', trackIdIcon, 'trackId');
         const trackLinkOption = createMenuItem('Track Link', trackLinkIcon, 'trackLink');
-
+    
         menu.appendChild(toggleOption);
         menu.appendChild(separator);
         menu.appendChild(titleFirstOption);
         menu.appendChild(artistFirstOption);
         menu.appendChild(trackIdOption);
         menu.appendChild(trackLinkOption);
-
+    
         optionsBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
@@ -228,11 +269,11 @@
             menu.style.top = `${rect.bottom + 5}px`;
             menu.style.left = `${rect.left}px`;
         });
-
+    
         document.addEventListener('click', () => {
             menu.style.display = 'none';
         });
-
+    
         const moreButton = actionBar.querySelector('[data-testid="more-button"]');
         if (moreButton) {
             moreButton.after(optionsBtn);
