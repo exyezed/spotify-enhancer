@@ -35,8 +35,8 @@ Add a button to download multiple cover arts at once.
 
 ## 4. Spotify to YouTube
 
-Easily find and open YouTube videos for any Spotify track with a single click.
+Easily find YouTube videos for a Spotify track.
 
 ![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/519979)
 
-![image](https://github.com/user-attachments/assets/e9ffcb64-d9d6-41dd-a9a7-18a4c383b71e)
+![image](https://github.com/user-attachments/assets/fc2e28fa-3c02-4fa4-b58d-094462287ad9)
