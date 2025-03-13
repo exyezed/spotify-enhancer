@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Copy Track Info, ID & Link)
-// @description  Integrates copy button with options in Spotify Web Player for easy access to track information, IDs, and links.
+// @description  Add a button to copy track info, ID, and link.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.3
+// @version      1.4
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -36,6 +36,8 @@
     const disabledIcon = createSVG("M192 128c-70.7 0-128 57.3-128 128s57.3 128 128 128H384c70.7 0 128-57.3 128-128s-57.3-128-128-128H192zM0 256C0 150 86 64 192 64H384c106 0 192 86 192 192s-86 192-192 192H192C86 448 0 362 0 256zm192 96c53 0 96-43 96-96s-43-96-96-96s-96 43-96 96s43 96 96 96z", "0 0 576 512", "16", "16", "margin-right: 8px; fill: currentColor; vertical-align: middle");
     const titleIcon = createSVG("M498.7 6c8.3 6 13.3 15.7 13.3 26l0 64c0 13.8-8.8 26-21.9 30.4L416 151.1 416 432c0 44.2-50.1 80-112 80s-112-35.8-112-80s50.1-80 112-80c17.2 0 33.5 2.8 48 7.7L352 128l0-64c0-13.8 8.8-26 21.9-30.4l96-32C479.6-1.6 490.4 0 498.7 6zM32 64l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96S14.3 64 32 64zm0 128l224 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 256c-17.7 0-32-14.3-32-32s14.3-32 32-32zm0 128l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-96 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z", "0 0 512 512", "16", "16", "margin-right: 8px; fill: #b3b3b3; vertical-align: middle");
     const artistIcon = createSVG("M224 0a128 128 0 1 1  0 256A128 128 0 1 1 224 0zM178.3 304l91.4 0c36.3 0 70.1 10.9 98.3 29.5l0 51.6c-18 2.5-34.8 9.1-48.5 19.4c-17.6 13.2-31.5 34-31.5 59.5c0 19.1 7.7 35.4 18.9 48L29.7 512C13.3 512 0 498.7 0 482.3C0 383.8 79.8 304 178.3 304zM630 164.5c6.3 4.5 10 11.8 10 19.5l0 48 0 160c0 1.2-.1 2.4-.3 3.6c.2 1.5 .3 2.9 .3 4.4c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5l0-88.2-144 48L448 464c0 26.5-28.7 48-64 48s-64-21.5-64-48s28.7-48 64-48c5.5 0 10.9 .5 16 1.5L400 296l0-48c0-10.3 6.6-19.5 16.4-22.8l192-64c7.3-2.4 15.4-1.2 21.6 3.3z", "0 0 640 512", "16", "16", "margin-right:  8px; fill: #b3b3b3; vertical-align: middle");
+    const optionsIcon = createSVG("M0 96C0 78.3 14.3 64 32 64l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 128C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32l384 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 288c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32L32 448c-17.7 0-32-14.3-32-32s14.3-32 32-32l384 0c17.7 0 32 14.3 32 32z", "0 0 448 512", "16", "16", "margin-right:  8px; fill: #b3b3b3; vertical-align: middle");
+
 
     const defaultSettings = {
         copyType: 'trackId',
@@ -211,7 +213,7 @@
             optionsBtn.style.color = '#b3b3b3';
         });
     
-        const icon = copyIcon.cloneNode(true);
+        const icon = optionsIcon.cloneNode(true);
         icon.style.cssText = `
             margin-right: 8px;
             width: 16px;
@@ -353,5 +355,4 @@
     });
 
     initialize();
-    console.log('Spotify Enhancer (Copy Track Info, ID & Link) is running');
 })();
