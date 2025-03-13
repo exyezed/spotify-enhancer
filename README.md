@@ -27,11 +27,11 @@ Integrates copy button with options in Spotify Web Player for easy access to tra
 
 ## 3. Cover Art Bulk Downloader
 
-Integrates a download button into the Spotify Web Player for bulk cover art downloads.
+Add a button to download multiple cover arts at once.
 
 ![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/514421)
 
-![image](https://github.com/user-attachments/assets/2b19bc60-0318-45a5-b2a2-9b94144e4f45)
+![image](https://github.com/user-attachments/assets/c24b31e0-6368-4e7c-9c2d-4ea9dcfca6d5)
 
 ![image](https://github.com/user-attachments/assets/f01633f9-72b9-41ea-85bd-0368493087c2)
 
