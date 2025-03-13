@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
-// @description  Integrates a download button into the Spotify Web Player for bulk cover art downloads.
+// @description  Add a button to download multiple cover arts at once.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      2.0
+// @version      2.1
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -13,7 +13,6 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
-// @connect      spotapis.vercel.app
 // @connect      i.scdn.co
 // ==/UserScript==
 
@@ -155,11 +154,21 @@
         return button;
     }
 
+    function getSizeLabel(sizeCode) {
+        const sizeLabels = {
+          'SMALL': 'Small',
+          'MEDIUM': 'Medium',
+          'LARGE': 'Large',
+          'ORIGINAL': 'Original'
+        };
+        return sizeLabels[sizeCode] || 'Medium';
+    }
+
     function createProgressOverlay() {
         const overlay = createElementSafe('div', { className: 'download-progress-overlay' });
         const container = createElementSafe('div', { className: 'progress-container' });
         
-        const title = createElementSafe('div', { className: 'progress-title' }, ['Downloading Cover Art']);
+        const title = createElementSafe('div', { className: 'progress-title' }, [`Downloading ${getSizeLabel(CONFIG.selectedSize)} Cover Art`]);
         const progressBar = createElementSafe('div', { className: 'progress-bar' });
         const progressFill = createElementSafe('div', { className: 'progress-fill' });
         const status = createElementSafe('div', { className: 'progress-status' }, ['Preparing download...']);
@@ -181,7 +190,7 @@
         const percentage = (current / total) * 100;
 
         progressFill.style.width = `${percentage}%`;
-        progressStatus.textContent = status || `Downloading ${current} of ${total} cover arts`;
+        progressStatus.textContent = status || `Downloading ${current} of ${total}`;
     }
 
     function createDownloadButton() {
@@ -209,21 +218,120 @@
         return match ? match[1] : null;
     }
 
-    async function fetchCoverData(playlistId) {
-        return new Promise((resolve, reject) => {
-            GM_xmlhttpRequest({
-                method: 'GET',
-                url: `https://spotapis.vercel.app/playlist/${playlistId}`,
-                onload: function(response) {
-                    try {
-                        const data = JSON.parse(response.responseText);
-                        resolve(data);
-                    } catch (error) {
-                        reject(error);
-                    }
-                },
-                onerror: reject
+    async function getSpotifyToken() {
+        try {
+            const tokenUrl = 'https://open.spotify.com/get_access_token?reason=transport&productType=web_player';
+            const response = await fetch(tokenUrl);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data.accessToken;
+        } catch (error) {
+            console.error('Error getting token:', error);
+            return null;
+        }
+    }
+    
+    async function getPlaylistInfo(playlistId, token) {
+        try {
+            const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}`;
+            
+            const response = await fetch(endpoint, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return {
+                name: data.name || 'Unknown Playlist',
+                description: data.description || '',
+                owner: data.owner ? data.owner.display_name : 'Unknown',
+                followers: data.followers ? data.followers.total : 0,
+                imageUrl: data.images && data.images.length > 0 ? data.images[0].url : null
+            };
+        } catch (error) {
+            console.error('Error fetching playlist info:', error);
+            return {
+                name: 'Unknown Playlist',
+                description: '',
+                owner: 'Unknown',
+                followers: 0,
+                imageUrl: null
+            };
+        }
+    }
+    
+    async function getAllTracks(playlistId, token) {
+        try {
+            if (!token) {
+                throw new Error('Failed to get access token');
+            }
+            
+            const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+            
+            let allItems = [];
+            let nextUrl = endpoint;
+            
+            while (nextUrl) {
+                const url = new URL(nextUrl);
+                url.searchParams.set('limit', '50');
+                
+                const response = await fetch(url.toString(), {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.items && Array.isArray(data.items)) {
+                    allItems = [...allItems, ...data.items];
+                }
+                
+                nextUrl = data.next;
+            }
+            
+            return allItems;
+        } catch (error) {
+            console.error('Error fetching tracks:', error);
+            return [];
+        }
+    }
+    
+    function processTrackDataForDownload(items) {
+        return items.map((item) => {
+            const track = item.track;
+            
+            if (!track) return {
+                title: 'Unknown Track',
+                artist: 'Unknown Artist',
+                cover: null
+            };
+            
+            let coverUrl = null;
+            if (track.album && track.album.images && track.album.images.length > 0) {
+                coverUrl = track.album.images[0].url;
+            }
+            
+            return {
+                title: track.name || 'Unknown Track',
+                artist: track.artists ? track.artists.map(a => a.name).join(', ') : 'Unknown Artist',
+                cover: coverUrl
+            };
         });
     }
 
@@ -252,9 +360,9 @@
                 alert('Could not find playlist ID');
                 return;
             }
-
+    
             abortDownload = false;
-
+    
             const button = document.querySelector('.download-button');
             if (button) {
                 button.classList.add('loading');
@@ -266,9 +374,16 @@
                     iconWrapper.appendChild(createSVGSafe(ICONS.spinner));
                 }
             }
-
-            const coverData = await fetchCoverData(playlistId);
-
+    
+            const token = await getSpotifyToken();
+            if (!token) {
+                throw new Error('Failed to get access token');
+            }
+    
+            const playlistInfo = await getPlaylistInfo(playlistId, token);
+            const trackItems = await getAllTracks(playlistId, token);
+            const processedTracks = processTrackDataForDownload(trackItems);
+    
             if (button) {
                 button.classList.remove('loading');
                 const iconWrapper = button.querySelector('.IconWrapper');
@@ -279,34 +394,36 @@
                     iconWrapper.appendChild(createSVGSafe(ICONS.download));
                 }
             }
-
+    
             overlay = createProgressOverlay();
             document.body.appendChild(overlay);
-
+    
             overlay.querySelector('.cancel-button').addEventListener('click', () => {
                 abortDownload = true;
                 updateProgress(overlay, 0, 0, 'Cancelling download...');
             });
-
+    
             const zip = new JSZip();
-            const total = coverData.track_list.length;
-
+            const total = processedTracks.length;
+    
             for (let i = 0; i < total; i++) {
                 if (abortDownload) {
                     throw new Error('Download cancelled by user');
                 }
-
-                const track = coverData.track_list[i];
+    
+                const track = processedTracks[i];
                 try {
                     updateProgress(overlay, i + 1, total);
-                    const imageBlob = await fetchImageAsBlob(track.cover);
-                    const filename = sanitizeFilename(`${track.title} - ${track.artist}.jpeg`);
-                    zip.file(filename, imageBlob);
+                    if (track.cover) {
+                        const imageBlob = await fetchImageAsBlob(track.cover);
+                        const filename = sanitizeFilename(`${track.title} - ${track.artist}.jpeg`);
+                        zip.file(filename, imageBlob);
+                    }
                 } catch (error) {
                     console.error(`Failed to download cover art for ${track.title}:`, error);
                 }
             }
-
+    
             updateProgress(overlay, total, total, 'Creating ZIP file...');
             const zipBlob = await zip.generateAsync({type: 'blob'});
             
@@ -321,15 +438,15 @@
                 'ORIGINAL': '(Original)'
             };
             const resolutionSuffix = sizeLabels[CONFIG.selectedSize];
-            downloadLink.download = sanitizeFilename(`${coverData.playlist_info.title} ${resolutionSuffix}.zip`);
+            downloadLink.download = sanitizeFilename(`${playlistInfo.name} ${resolutionSuffix}.zip`);
             
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
             URL.revokeObjectURL(zipUrl);
-
+    
             document.body.removeChild(overlay);
-
+    
         } catch (error) {
             console.error('Error downloading cover art:', error);
             if (!abortDownload) {
@@ -746,5 +863,4 @@
             opacity: 0.8;
         }
     `);
-    console.log('Spotify Enhancer (Cover Art Bulk Downloader) is running');
 })();
