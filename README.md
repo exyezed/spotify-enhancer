@@ -9,21 +9,19 @@
 
 ## 1. Full-Sized Cover Art Downloader
 
-Integrates an overlay button in Spotify Web Player to view and download full-sized `2000px` album cover art.
+Add a button to view and download full-sized cover art.
 
 ![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/514396)
 
-![image](https://github.com/user-attachments/assets/706fefb3-bba8-4cf4-8c80-33659f760065)
-
-![image](https://github.com/user-attachments/assets/1f345d1c-52e7-481d-b3e1-62638bd3687f)
+![image](https://github.com/user-attachments/assets/74a6dcbb-0468-4251-b829-02c466b0fee7)
 
 ## 2. Copy Track Info, ID & Link
 
-Integrates copy button with options in Spotify Web Player for easy access to track information, IDs, and links.
+Add a button to copy track info, ID, and link.
 
 ![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/514706)
 
-![image](https://github.com/user-attachments/assets/a432bc3f-27c8-47d6-9b5a-c7a8969457d4)
+![image](https://github.com/user-attachments/assets/4dbbde98-9cf7-47b5-a7ba-d44fd7727a73)
 
 ## 3. Cover Art Bulk Downloader
 
