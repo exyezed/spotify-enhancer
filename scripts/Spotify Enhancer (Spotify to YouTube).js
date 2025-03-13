@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Spotify Enhancer (Spotify to YouTube)
-// @description  Easily find and open YouTube videos for any Spotify track with a single click.
+// @description  Easily find YouTube videos for a Spotify track.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.2
+// @version      1.3
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -16,7 +16,7 @@
 (function() {
     'use strict';
 
-    const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000;
+    const CACHE_DURATION = 1 * 24 * 60 * 60 * 1000;
 
     const spinnerSVG = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="spinner-icon" style="
@@ -115,17 +115,17 @@
             return;
         }
         
-        fetch(`https://spotapis.vercel.app/track/${trackId}`)
+        fetch(`https://spotifytube.vercel.app/${trackId}`)
             .then(response => response.json())
             .then(data => {
-                if (data.youtube_url) {
+                if (data.youtube && data.youtube.url) {
                     GM_setValue(`youtube_link_${trackId}`, {
-                        youtube_url: data.youtube_url,
+                        youtube_url: data.youtube.url,
                         timestamp: Date.now()
                     });
-                    GM_openInTab(data.youtube_url, { active: true });
+                    GM_openInTab(data.youtube.url, { active: true });
                 } else {
-                    console.error('No YouTube URL found');
+                    console.error('No YouTube URL found in response');
                 }
             })
             .catch(error => {
@@ -138,7 +138,7 @@
     }
     
     function removeYouTubeIcon() {
-        const iconContainer = document.querySelector('.youtube-icon').parentNode;
+        const iconContainer = document.querySelector('.youtube-icon')?.parentNode;
         if (iconContainer) {
             iconContainer.remove();
         }
@@ -177,5 +177,4 @@
     });
     
     insertSVGIconNextToH1();
-    console.log('Spotify Enhancer (Spotify to YouTube) is running');
 })();
