@@ -3,6 +3,9 @@
 > [!IMPORTANT]
 > To use this script, you must have Tampermonkey installed.
 
+> [!TIP]
+> For more convenience, use AdGuard Desktop; once installed, it can integrate with all browsers without needing to install them one by one.
+
 ### [Greasy Fork](https://greasyfork.org/en/users/1382928-exyezed)
 
 ![Total Installs](https://img.shields.io/badge/dynamic/json?color=%230072C6&label=Total%20Installs&query=$&url=https://forksinstalls.vercel.app/total/greasyfork.org/en/users/1382928)
