@@ -43,8 +43,3 @@ Easily find YouTube videos for a Spotify track.
 ![Installs](https://img.shields.io/badge/dynamic/json?color=%232ea44f&label=Installs&query=$&url=https://forksinstalls.vercel.app/greasyfork.org/en/scripts/519979)
 
 ![image](https://github.com/user-attachments/assets/fc2e28fa-3c02-4fa4-b58d-094462287ad9)
-
-## Contributor
-<a href="https://github.com/exyezed/spotify-enhancer/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=exyezed/spotify-enhancer" />
-</a>
