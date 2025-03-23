@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Spotify Enhancer (Full-Sized Cover Art Downloader)
+// @name         Spotify Enhancer (Cover Art Downloader)
 // @description  Add a button to view and download full-sized cover art.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.7
+// @version      1.8
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues

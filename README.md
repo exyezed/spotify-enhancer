@@ -10,7 +10,7 @@
 
 ![Total Installs](https://img.shields.io/badge/dynamic/json?color=%230072C6&label=Total%20Installs&query=$&url=https://forksinstalls.vercel.app/total/greasyfork.org/en/users/1382928)
 
-## 1. Full-Sized Cover Art Downloader
+## 1. Cover Art Downloader
 
 Add a button to view and download full-sized cover art.
 
