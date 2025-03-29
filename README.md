@@ -36,7 +36,7 @@ Add a button to download multiple cover arts at once.
 
 ![image](https://github.com/user-attachments/assets/f01633f9-72b9-41ea-85bd-0368493087c2)
 
-## 4. Spotify to YouTube
+## 4. YouTube Search
 
 Easily find YouTube videos for a Spotify track.
 
