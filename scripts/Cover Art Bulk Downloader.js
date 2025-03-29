@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Add a button to download multiple cover arts at once.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      2.2
+// @version      2.3
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -13,7 +13,6 @@
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
-// @require      https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // @connect      i.scdn.co
 // ==/UserScript==
 
@@ -219,80 +218,29 @@
         return match ? match[1] : null;
     }
 
-    function generateTOTP() {
-        const secretBytes = [
-            53, 53, 48, 55, 49, 52, 53, 56, 53, 51, 52, 56, 
-            55, 52, 57, 57, 53, 57, 50, 50, 52, 56, 54, 51, 
-            48, 51, 50, 57, 51, 52, 55
-        ];
-        
-        const secretHex = secretBytes.map(b => b.toString(16).padStart(2, '0')).join('');
-        const secretKey = CryptoJS.enc.Hex.parse(secretHex);
-        
-        const counter = Math.floor(Date.now() / 30000);
-        
-        const counterHex = counter.toString(16).padStart(16, '0');
-        const counterBuffer = CryptoJS.enc.Hex.parse(counterHex);
-        
-        const hmac = CryptoJS.HmacSHA1(counterBuffer, secretKey);
-        
-        const hmacByteArr = hexToBytes(hmac.toString());
-        
-        const offset = hmacByteArr[19] & 0xf;
-        
-        const truncatedValue = 
-            ((hmacByteArr[offset] & 0x7f) << 24) |
-            ((hmacByteArr[offset + 1] & 0xff) << 16) |
-            ((hmacByteArr[offset + 2] & 0xff) << 8) |
-            (hmacByteArr[offset + 3] & 0xff);
-        
-        const otp = (truncatedValue % 1000000).toString().padStart(6, '0');
-        const timestamp = counter * 30000;
-        
-        return { totp: otp, timestamp };
-    }
-    
-    function hexToBytes(hex) {
-        const bytes = [];
-        for (let i = 0; i < hex.length; i += 2) {
-            bytes.push(parseInt(hex.substr(i, 2), 16));
-        }
-        return bytes;
-    }
-    
     async function getSpotifyToken() {
-        try {
-            const { totp, timestamp } = generateTOTP();
-            
-            const tokenUrl = 'https://open.spotify.com/get_access_token';
-            const params = new URLSearchParams({
-                reason: 'transport',
-                productType: 'web_player',
-                totp: totp,
-                totpVer: '5',
-                ts: timestamp.toString()
-            });
-            
-            const response = await fetch(`${tokenUrl}?${params}`, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-                    'Accept': 'application/json',
-                    'Accept-Language': 'en-US,en;q=0.9',
-                    'Referer': 'https://open.spotify.com/',
-                    'Origin': 'https://open.spotify.com'
+        const resources = performance.getEntriesByType('resource');
+        
+        for (const resource of resources) {
+            if (resource.name.includes('https://open.spotify.com/get_access_token')) {
+                console.log('RESOURCE URL:', resource.name);
+                
+                try {
+                    const response = await fetch(resource.name);
+                    const data = await response.json();
+                    
+                    if (data && data.accessToken) {
+                        console.log('ACCESS TOKEN:', data.accessToken);
+                        return data.accessToken;
+                    }
+                } catch (error) {
+                    console.error('Error fetching token:', error);
                 }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            
-            const data = await response.json();
-            return data.accessToken;
-        } catch (error) {
-            console.error('Error getting token:', error);
-            return null;
         }
+        
+        console.log('No Spotify token found in performance resources');
+        return null;
     }
     
     async function getPlaylistInfo(playlistId, token) {
@@ -510,7 +458,7 @@
         } catch (error) {
             console.error('Error downloading cover art:', error);
             if (!abortDownload) {
-                alert('Failed to download cover art. Please try again.');
+                alert('Failed to download cover art. Try refreshing the page.');
             }
             if (overlay) {
                 document.body.removeChild(overlay);
