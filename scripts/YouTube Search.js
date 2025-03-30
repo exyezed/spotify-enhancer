@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (YouTube Search)
 // @description  Easily find YouTube videos for a Spotify track.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.4
+// @version      1.5
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -146,6 +146,18 @@
         return matchCount / Math.max(words1.length, words2.length);
     }
 
+    function getOfficialMusicVideoScore(title) {
+        const lowerTitle = title.toLowerCase();
+        
+        if (lowerTitle.includes("official music video")) return 3;
+        
+        if (lowerTitle.includes("official") && lowerTitle.includes("video")) return 2;
+        
+        if (lowerTitle.includes("official") || lowerTitle.includes("music video")) return 1;
+        
+        return 0;
+    }
+
     async function searchYouTube(query, artistName, originalTitle) {
         return new Promise((resolve, reject) => {
             const encodedQuery = encodeURIComponent(query);
@@ -226,7 +238,7 @@
                         }
                         
                         if (!contents || !contents.length) {
-                            return reject('No search results found in the YouTube data structure');
+                            return reject('No search results found in the YouTube data structure. Try refreshing the page.');
                         }
                         
                         for (const section of contents) {
@@ -264,8 +276,7 @@
                                             badge.metadataBadgeRenderer?.style?.includes('VERIFIED')))
                                     ) || false;
                                     
-                                    const hasOfficialMarker = /official|music video|mv/i.test(title);
-                                    
+                                    const officialMusicVideoScore = getOfficialMusicVideoScore(title);
                                     const similarityScore = calculateSimilarity(title, originalTitle);
                                     
                                     videos.push({
@@ -273,7 +284,7 @@
                                         title: title,
                                         channelName: channelName,
                                         isVerified: isVerified,
-                                        hasOfficialMarker: hasOfficialMarker,
+                                        officialMusicVideoScore: officialMusicVideoScore,
                                         views: viewText,
                                         viewCount: viewCount,
                                         similarityScore: similarityScore,
@@ -284,18 +295,40 @@
                         }
                         
                         if (videos.length === 0) {
-                            return reject('No videos found in search results');
+                            return reject('No videos found in search results. Try refreshing the page.');
                         }
                         
                         console.log(`Found ${videos.length} videos in search results`);
                         
-                        videos.sort((a, b) => b.similarityScore - a.similarityScore);
-                        
                         let bestMatch = videos.find(v => 
                             v.similarityScore > 0.7 && 
                             v.isVerified && 
+                            v.officialMusicVideoScore >= 2 &&
                             v.channelName.toLowerCase().includes(artistName.toLowerCase())
                         );
+                        
+                        if (!bestMatch) {
+                            bestMatch = videos.find(v => 
+                                v.officialMusicVideoScore >= 2 &&
+                                v.isVerified &&
+                                v.channelName.toLowerCase().includes(artistName.toLowerCase())
+                            );
+                        }
+                        
+                        if (!bestMatch) {
+                            bestMatch = videos.find(v => 
+                                v.similarityScore > 0.7 && 
+                                v.isVerified && 
+                                v.channelName.toLowerCase().includes(artistName.toLowerCase())
+                            );
+                        }
+                        
+                        if (!bestMatch) {
+                            bestMatch = videos.find(v => 
+                                v.officialMusicVideoScore >= 2 &&
+                                v.isVerified
+                            );
+                        }
                         
                         if (!bestMatch) {
                             bestMatch = videos.find(v => v.similarityScore > 0.7);
@@ -304,28 +337,7 @@
                         if (!bestMatch) {
                             bestMatch = videos.find(v => 
                                 v.isVerified && 
-                                v.channelName.toLowerCase().includes(artistName.toLowerCase()) && 
-                                v.hasOfficialMarker
-                            );
-                        }
-                        
-                        if (!bestMatch) {
-                            bestMatch = videos.find(v => 
-                                v.isVerified && 
                                 v.channelName.toLowerCase().includes(artistName.toLowerCase())
-                            );
-                        }
-                        
-                        if (!bestMatch) {
-                            bestMatch = videos.find(v => 
-                                v.isVerified && 
-                                v.hasOfficialMarker
-                            );
-                        }
-                        
-                        if (!bestMatch) {
-                            bestMatch = videos.find(v => 
-                                v.hasOfficialMarker
                             );
                         }
                         
@@ -338,14 +350,14 @@
                             console.log("Selected video:", bestMatch);
                             resolve(bestMatch);
                         } else {
-                            reject('No suitable videos found in search results');
+                            reject('No suitable videos found in search results. Try refreshing the page.');
                         }
                     } catch (error) {
-                        reject(`Error parsing YouTube search results: ${error.message}`);
+                        reject(`Error parsing YouTube search results: ${error.message}. Try refreshing the page.`);
                     }
                 },
                 onerror: function(error) {
-                    reject(`Error searching YouTube: ${error}`);
+                    reject(`Error searching YouTube: ${error}. Try refreshing the page.`);
                 }
             });
         });
@@ -370,38 +382,38 @@
             }
             
             if (!token) {
-                throw new Error('Failed to get Spotify token after multiple attempts');
+                throw new Error('Failed to get Spotify token after multiple attempts. Try refreshing the page.');
             }
             
             const trackData = await getSingleTrack(trackId, token);
             if (!trackData) {
-                throw new Error('Track not found');
+                throw new Error('Track not found. Try refreshing the page.');
             }
             
             const primaryArtist = trackData.artists.split(',')[0].trim();
             const originalTitle = trackData.title;
             
-            console.log(`Searching YouTube for: ${trackData.title} - ${trackData.artists} official`);
+            console.log(`Searching YouTube for: ${trackData.title} - ${trackData.artists} official music video`);
             
-            const searchQuery = `${trackData.title} - ${trackData.artists} official`;
+            const searchQuery = `${trackData.title} - ${primaryArtist} official music video`;
             
             try {
                 const videoData = await searchYouTube(searchQuery, primaryArtist, originalTitle);
                 if (!videoData) {
-                    throw new Error('YouTube video not found');
+                    throw new Error('YouTube video not found. Try refreshing the page.');
                 }
                 
                 GM_openInTab(videoData.url, { active: true });
             } catch (youtubeError) {
                 try {
                     console.log("First search failed, trying fallback search");
-                    const fallbackQuery = `${trackData.title} ${primaryArtist}`;
+                    const fallbackQuery = `${trackData.title} ${primaryArtist} official`;
                     const fallbackData = await searchYouTube(fallbackQuery, primaryArtist, originalTitle);
                     
                     if (fallbackData) {
                         GM_openInTab(fallbackData.url, { active: true });
                     } else {
-                        throw new Error('Fallback search failed');
+                        throw new Error('Fallback search failed. Try refreshing the page.');
                     }
                 } catch (fallbackError) {
                     console.log("Fallback search also failed, opening YouTube search results page");
