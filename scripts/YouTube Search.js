@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (YouTube Search)
 // @description  Easily find YouTube videos for a Spotify track.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.5
+// @version      1.6
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -301,15 +301,14 @@
                         console.log(`Found ${videos.length} videos in search results`);
                         
                         let bestMatch = videos.find(v => 
-                            v.similarityScore > 0.7 && 
+                            v.similarityScore > 0.8 && 
                             v.isVerified && 
-                            v.officialMusicVideoScore >= 2 &&
                             v.channelName.toLowerCase().includes(artistName.toLowerCase())
                         );
                         
                         if (!bestMatch) {
                             bestMatch = videos.find(v => 
-                                v.officialMusicVideoScore >= 2 &&
+                                v.title.toLowerCase().includes(originalTitle.toLowerCase()) &&
                                 v.isVerified &&
                                 v.channelName.toLowerCase().includes(artistName.toLowerCase())
                             );
@@ -317,16 +316,10 @@
                         
                         if (!bestMatch) {
                             bestMatch = videos.find(v => 
-                                v.similarityScore > 0.7 && 
+                                v.similarityScore > 0.5 && 
+                                v.officialMusicVideoScore >= 1 &&
                                 v.isVerified && 
                                 v.channelName.toLowerCase().includes(artistName.toLowerCase())
-                            );
-                        }
-                        
-                        if (!bestMatch) {
-                            bestMatch = videos.find(v => 
-                                v.officialMusicVideoScore >= 2 &&
-                                v.isVerified
                             );
                         }
                         
@@ -335,10 +328,41 @@
                         }
                         
                         if (!bestMatch) {
+                            const titleWords = originalTitle.toLowerCase().split(' ').filter(word => word.length > 3);
                             bestMatch = videos.find(v => 
+                                v.isVerified && 
+                                v.channelName.toLowerCase().includes(artistName.toLowerCase()) &&
+                                titleWords.some(word => v.title.toLowerCase().includes(word))
+                            );
+                        }
+                        
+                        if (!bestMatch) {
+                            bestMatch = videos.find(v => 
+                                v.officialMusicVideoScore >= 1 &&
+                                v.isVerified &&
+                                v.channelName.toLowerCase().includes(artistName.toLowerCase())
+                            );
+                        }
+                        
+                        if (!bestMatch) {
+                            bestMatch = videos.find(v => 
+                                v.title.toLowerCase().includes(originalTitle.toLowerCase()) &&
+                                (v.title.toLowerCase().includes("audio") || v.title.toLowerCase().includes("lyric")) &&
+                                v.isVerified &&
+                                v.channelName.toLowerCase().includes(artistName.toLowerCase())
+                            );
+                        }
+                        
+                        if (!bestMatch) {
+                            const artistVideos = videos.filter(v => 
                                 v.isVerified && 
                                 v.channelName.toLowerCase().includes(artistName.toLowerCase())
                             );
+                            
+                            if (artistVideos.length > 0) {
+                                artistVideos.sort((a, b) => b.viewCount - a.viewCount);
+                                bestMatch = artistVideos[0];
+                            }
                         }
                         
                         if (!bestMatch && videos.length > 0) {
