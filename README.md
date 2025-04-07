@@ -8,13 +8,13 @@
 
 ### [Greasy Fork](https://greasyfork.org/en/users/1382928-exyezed)
 
-![Total Installs](https://forkstats.greasyfork.workers.dev/total/greasyfork.org/en/users/1382928)
+![Total Installs](https://forkstats.afkarxyz.workers.dev/total/greasyfork.org/en/users/1382928)
 
 ## 1. Cover Art Downloader
 
 Add a button to view and download full-sized cover art.
 
-![Installs](https://forkstats.greasyfork.workers.dev/installs/greasyfork.org/en/scripts/514396)
+![Installs](https://forkstats.afkarxyz.workers.dev/installs/greasyfork.org/en/scripts/514396)
 
 ![image](https://github.com/user-attachments/assets/74a6dcbb-0468-4251-b829-02c466b0fee7)
 
@@ -22,7 +22,7 @@ Add a button to view and download full-sized cover art.
 
 Add a button to copy track info, ID, and link.
 
-![Installs](https://forkstats.greasyfork.workers.dev/installs/greasyfork.org/en/scripts/514706)
+![Installs](https://forkstats.afkarxyz.workers.dev/installs/greasyfork.org/en/scripts/514706)
 
 ![image](https://github.com/user-attachments/assets/4dbbde98-9cf7-47b5-a7ba-d44fd7727a73)
 
@@ -30,7 +30,7 @@ Add a button to copy track info, ID, and link.
 
 Add a button to download multiple cover arts at once.
 
-![Installs](https://forkstats.greasyfork.workers.dev/installs/greasyfork.org/en/scripts/514421)
+![Installs](https://forkstats.afkarxyz.workers.dev/installs/greasyfork.org/en/scripts/514421)
 
 ![image](https://github.com/user-attachments/assets/c24b31e0-6368-4e7c-9c2d-4ea9dcfca6d5)
 
@@ -40,6 +40,6 @@ Add a button to download multiple cover arts at once.
 
 Easily find YouTube videos for a Spotify track.
 
-![Installs](https://forkstats.greasyfork.workers.dev/installs/greasyfork.org/en/scripts/519979)
+![Installs](https://forkstats.afkarxyz.workers.dev/installs/greasyfork.org/en/scripts/519979)
 
 ![image](https://github.com/user-attachments/assets/fc2e28fa-3c02-4fa4-b58d-094462287ad9)
