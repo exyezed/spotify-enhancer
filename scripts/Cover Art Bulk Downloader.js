@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Add a button to download multiple cover arts at once.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      2.3
+// @version      2.4
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -12,7 +12,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @require      https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js
+// @require      https://cdn.jsdelivr.net/npm/jszip@3.7.1/dist/jszip.min.js
 // @connect      i.scdn.co
 // ==/UserScript==
 
@@ -281,6 +281,9 @@
     async function getAllTracks(playlistId, token) {
         try {
             if (!token) {
+                if (confirm('Failed to get access token. Click OK to refresh the page.')) {
+                    location.reload();
+                }
                 throw new Error('Failed to get access token');
             }
             
@@ -301,6 +304,9 @@
                 });
                 
                 if (!response.ok) {
+                    if (confirm(`Error fetching tracks: ${response.status}. Click OK to refresh the page.`)) {
+                        location.reload();
+                    }
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 
@@ -385,6 +391,9 @@
     
             const token = await getSpotifyToken();
             if (!token) {
+                if (confirm('Failed to get access token. Click OK to refresh the page.')) {
+                    location.reload();
+                }
                 throw new Error('Failed to get access token');
             }
     
