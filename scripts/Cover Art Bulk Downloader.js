@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (Cover Art Bulk Downloader)
 // @description  Add a button to download multiple cover arts at once.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      2.4
+// @version      2.5
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -222,7 +222,7 @@
         const resources = performance.getEntriesByType('resource');
         
         for (const resource of resources) {
-            if (resource.name.includes('https://open.spotify.com/get_access_token')) {
+            if (resource.name.includes('https://open.spotify.com/api/token')) {
                 console.log('RESOURCE URL:', resource.name);
                 
                 try {
