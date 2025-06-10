@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (YouTube Search)
 // @description  Easily find YouTube videos for a Spotify track.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.6
+// @version      1.7
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -51,7 +51,7 @@
         const resources = performance.getEntriesByType('resource');
         
         for (const resource of resources) {
-            if (resource.name.includes('https://open.spotify.com/get_access_token')) {
+            if (resource.name.includes('https://open.spotify.com/api/token')) {
                 try {
                     const response = await fetch(resource.name);
                     const data = await response.json();
