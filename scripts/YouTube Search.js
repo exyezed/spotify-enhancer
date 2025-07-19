@@ -2,7 +2,7 @@
 // @name         Spotify Enhancer (YouTube Search)
 // @description  Easily find YouTube videos for a Spotify track.
 // @icon         https://raw.githubusercontent.com/exyezed/spotify-enhancer/refs/heads/main/extras/spotify-enhancer.png
-// @version      1.7
+// @version      1.8
 // @author       exyezed
 // @namespace    https://github.com/exyezed/spotify-enhancer/
 // @supportURL   https://github.com/exyezed/spotify-enhancer/issues
@@ -450,68 +450,68 @@
         } catch (error) {
             alert('Error finding YouTube video. Try refreshing the page.');
         }
-    }
-
+    }    
+    
     function insertSVGIconNextToH1() {
         if (!window.location.href.includes('/track/')) {
             return;
         }
 
-        const h1Elements = document.querySelectorAll('h1');
+        const trackTitleH1 = document.querySelector('h1[data-testid="entityTitle"] h1, h1.encore-text-headline-large, span[data-testid="entityTitle"] h1');
+        
+        if (!trackTitleH1 || trackTitleH1.querySelector('.youtube-icon')) {
+            return;
+        }
         
         const iconContainer = document.createElement('div');
         iconContainer.style.display = 'inline-block';
         iconContainer.style.position = 'relative';
+        iconContainer.innerHTML = youtubeIconSVG + spinnerSVG;
         
-        h1Elements.forEach(h1 => {
-            if (!h1.querySelector('.youtube-icon')) {
-                iconContainer.innerHTML = youtubeIconSVG + spinnerSVG;
-                
-                const youtubeIcon = iconContainer.querySelector('.youtube-icon');
-                const spinnerIcon = iconContainer.querySelector('.spinner-icon');
-                
-                const styleTag = document.createElement('style');
-                styleTag.textContent = `
-                  .youtube-icon:hover, .spinner-icon:hover {
-                    transform: scale(1.1);
-                  }
-                  @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                  }
-                  .spinner-icon {
-                    animation: spin 1s linear infinite;
-                  }
-                `;
-                document.head.appendChild(styleTag);
-                
-                const trackId = extractTrackId();
-                
-                youtubeIcon.addEventListener('click', async () => {
-                    youtubeIcon.style.display = 'none';
-                    spinnerIcon.style.display = 'inline-block';
-                    
-                    try {
-                        await processTrack(trackId, youtubeIcon, spinnerIcon);
-                    } finally {
-                        youtubeIcon.style.display = 'inline-block';
-                        spinnerIcon.style.display = 'none';
-                    }
-                });
-                
-                h1.appendChild(iconContainer);
+        const youtubeIcon = iconContainer.querySelector('.youtube-icon');
+        const spinnerIcon = iconContainer.querySelector('.spinner-icon');
+        
+        const styleTag = document.createElement('style');
+        styleTag.textContent = `
+          .youtube-icon:hover, .spinner-icon:hover {
+            transform: scale(1.1);
+          }
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          .spinner-icon {
+            animation: spin 1s linear infinite;
+          }
+        `;
+        document.head.appendChild(styleTag);
+        
+        const trackId = extractTrackId();
+        
+        youtubeIcon.addEventListener('click', async () => {
+            youtubeIcon.style.display = 'none';
+            spinnerIcon.style.display = 'inline-block';
+            
+            try {
+                await processTrack(trackId, youtubeIcon, spinnerIcon);
+            } finally {
+                youtubeIcon.style.display = 'inline-block';
+                spinnerIcon.style.display = 'none';
             }
         });
+        
+        trackTitleH1.appendChild(iconContainer);
     }
     
     function extractTrackId() {
         const urlMatch = window.location.href.match(/track\/([a-zA-Z0-9]+)/);
         return urlMatch ? urlMatch[1] : null;
     }
-    
+      
     function removeYouTubeIcon() {
-        const iconContainer = document.querySelector('.youtube-icon')?.parentNode;
-        if (iconContainer) {
+        const trackTitleH1 = document.querySelector('h1[data-testid="entityTitle"] h1 .youtube-icon, h1.encore-text-headline-large .youtube-icon, span[data-testid="entityTitle"] h1 .youtube-icon');
+        const iconContainer = trackTitleH1?.parentNode;
+        if (iconContainer && iconContainer.querySelector('.youtube-icon')) {
             iconContainer.remove();
         }
     }
